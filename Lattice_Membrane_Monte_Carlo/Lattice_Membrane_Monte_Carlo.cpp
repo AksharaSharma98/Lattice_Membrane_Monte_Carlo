@@ -49,7 +49,7 @@ int main()
 	membrane lower(n, species[1], pop[1], tail[1], 2);
 	
 	// system evolution
-	evolve_mc(upper, lower, 10, 1, 1);
+	evolve_mc(upper, lower, 1000000, 1, 1000);
 
 	// testing
 
