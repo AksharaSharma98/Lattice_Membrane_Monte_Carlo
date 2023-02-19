@@ -12,14 +12,18 @@ public:
 	~parameters();
 
 	// accessor functions
-	double getpair_energy(std::pair <std::string, std::string> species_pair);
+	double getplane_pair_energy(std::pair <std::string, std::string> species_pair);
+	double getinter_pair_energy(std::pair <std::string, std::string> species_pair);
 	int getoutput_type(std::string species);
 	
 	// modifier functions
 
 protected:
-	// contains pairwise interaction energy values for keys of 2 species type strings
-	std::map<std::pair<std::string, std::string>, double> pair_energy;
+	// contains pairwise in_plane interaction energy values for keys of 2 species name strings
+	std::map<std::pair<std::string, std::string>, double> plane_pair_energy;
+	// contains pairwise interleaflet interaction energy values for keys of 2 species name strings
+	std::map<std::pair<std::string, std::string>, double> inter_pair_energy;
+	// contains integer-type config output values for keys of string-type species names
 	std::map<std::string, int> output_type;
 };
 

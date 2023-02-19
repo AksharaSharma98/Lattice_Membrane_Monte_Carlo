@@ -22,7 +22,7 @@ void evolve_mc(membrane& upper, membrane& lower, int steps, int energy_output_fr
 	//fprintf(config_file, "header");                         // insert function to write header
 
 	double energy = system_energy(upper, lower);
-	int c1[2] = { 0,0 }, c2[2] = {0,0};
+	int c1[2] = {0,0}, c2[2] = {0,0};
 
 	assert(steps >= 1 && "Invalid number of steps");
 	for (int t = 0; t < steps; t++) {
@@ -33,7 +33,7 @@ void evolve_mc(membrane& upper, membrane& lower, int steps, int energy_output_fr
 
 		// pick non-degenerate lipids to exchange, attempt a monte-carlo exchange move
 		lipid_picker(lower, c1, c2);
-		energy += monte_carlo_move(lower, lower, c1, c2);
+		energy += monte_carlo_move(lower, upper, c1, c2);
 
 		// output configuration at specified frequency
 		if (t % energy_output_freq == 0) {
@@ -79,13 +79,13 @@ void lipid_picker(membrane leaflet, int c1[2], int c2[2]) {
 double monte_carlo_move(membrane& current, membrane& opposing, int* a, int* b) {
 
 	// calculate initial energy
-	double Ei = local_energy(current, opposing, a, b);
+	double Ei = local_energy(current, opposing, a) + local_energy(current, opposing, b);
 
 	// swap lipids specified for the move
 	current.swap(a, b);
 
 	// calculate final energy, energy difference
-	double Ej = local_energy(current, opposing, a, b);
+	double Ej = local_energy(current, opposing, a) + local_energy(current, opposing, b);
 	double delE = Ej - Ei;
 
 	// accept/reject attempted move

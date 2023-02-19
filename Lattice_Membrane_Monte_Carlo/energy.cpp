@@ -1,5 +1,6 @@
 #include <math.h>
 #include <string>
+#include <tuple>
 #include <assert.h>
 
 #include "energy.h"
@@ -13,55 +14,45 @@
 double system_energy(membrane upper, membrane lower) {
 
 	int n = upper.getgrid().size();
-	double energy = 0.0, epsu = 0.0, epsl = 0.0;
+	double energy = 0.0;
 	int nbs[6][2] = { {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0} };
 
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
-			periodic_neighbours(upper, i, j, nbs);
-			std::string u = upper.getlipid(i, j).getspecies();
-			std::string l = lower.getlipid(i, j).getspecies();
-			for (int k = 0; k < 6; k++) {
-				std::string un = upper.getlipid(nbs[k][0], nbs[k][1]).getspecies();
-				std::string ln = lower.getlipid(nbs[k][0], nbs[k][1]).getspecies();
-				epsu = forcefield.getpair_energy(std::make_pair(u, un));
-				epsl = forcefield.getpair_energy(std::make_pair(l, ln));
-				energy += epsu + epsl;
-			}
-			// need to add leaflet coupling terms later
+			int x[2] = { i,j };
+			energy += local_energy(upper, lower, x);
+			energy += local_energy(lower, upper, x);
 		}
 	}
 
-	return energy/2.0; // verify if /2.0 is still correct after any Hamiltonian modificaitons
+	return energy/2.0;
+	// *** Very Important ***
+	// verify if /2.0 is still correct after any Hamiltonian modificaitons
 }
 
 
-double local_energy(membrane current, membrane opposing, int* a, int* b) {
+double local_energy(membrane current, membrane opposing, int* x) {
 
-	double loc_energy = 0.0, epsc = 0.0, epso = 0.0;
+	std::string c, o, cn, on;
+	double sc, so, scn;
+	double loc_e_plane = 0.0, loc_e_inter = 0.0, epsc = 0.0, epso = 0.0, epsi = 0.0;
 	int nbs[6][2] = { {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0} };
 
-	periodic_neighbours(current, a[0], a[1], nbs);
-	std::string c = current.getlipid(a[0], a[1]).getspecies();
-	std::string o = opposing.getlipid(a[0], a[1]).getspecies();
-	for (int k = 0; k < 6; k++) {
-		std::string cn = current.getlipid(nbs[k][0], nbs[k][1]).getspecies();
-		std::string on = opposing.getlipid(nbs[k][0], nbs[k][1]).getspecies();
-		epsc = forcefield.getpair_energy(std::make_pair(c, cn));
-		epso = forcefield.getpair_energy(std::make_pair(o, on));
-		loc_energy += epsc + epso;
-	}
+	periodic_neighbours(current, x[0], x[1], nbs);
 
-	periodic_neighbours(current, b[0], b[1], nbs);
-	c = current.getlipid(b[0], b[1]).getspecies();
-	o = opposing.getlipid(b[0], b[1]).getspecies();
+	c = current.getlipid(x[0], x[1]).getspecies();
+	o = opposing.getlipid(x[0], x[1]).getspecies();
+	sc = current.getlipid(x[0], x[1]).gettail_order();
+	so = opposing.getlipid(x[0], x[1]).gettail_order();
+	epsi = forcefield.getinter_pair_energy(std::make_pair(c, o));
 	for (int k = 0; k < 6; k++) {
-		std::string cn = current.getlipid(nbs[k][0], nbs[k][1]).getspecies();
-		std::string on = opposing.getlipid(nbs[k][0], nbs[k][1]).getspecies();
-		epsc = forcefield.getpair_energy(std::make_pair(c, cn));
-		epso = forcefield.getpair_energy(std::make_pair(o, on));
-		loc_energy += epsc + epso;
+		cn = current.getlipid(nbs[k][0], nbs[k][1]).getspecies();
+		on = opposing.getlipid(nbs[k][0], nbs[k][1]).getspecies();
+		scn = current.getlipid(nbs[k][0], nbs[k][1]).gettail_order();
+		epsc = forcefield.getplane_pair_energy(std::make_pair(c, cn));
+		loc_e_plane += epsc * sc * scn;                                         // e_i = eps_ij*s_i*s_j
 	}
+	loc_e_inter += epsi * sc * so;                                          // e_p = eps'_ii*s_i*s'_i
 
-	return loc_energy;
+	return loc_e_plane +loc_e_inter;
 }
