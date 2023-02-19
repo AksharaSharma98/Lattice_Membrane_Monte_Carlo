@@ -23,7 +23,7 @@ void evolve_mc(membrane& upper, membrane& lower, int steps, int energy_output_fr
 
 	double energy = system_energy(upper, lower);
 	int c1[2] = {0,0}, c2[2] = {0,0};
-
+	
 	assert(steps >= 1 && "Invalid number of steps");
 	for (int t = 0; t < steps; t++) {
 
@@ -37,7 +37,9 @@ void evolve_mc(membrane& upper, membrane& lower, int steps, int energy_output_fr
 
 		// output configuration at specified frequency
 		if (t % energy_output_freq == 0) {
-			write_energy(energy_file, energy);
+			write_energy(energy_file, energy); 
+			//printf("Current energy = %lf\n", energy);
+			//printf("Actual energy  = %lf\n", system_energy(upper, lower));
 		}
 		if (t % config_output_freq == 0) {
 			write_config_int(config_file, upper, lower);
@@ -77,7 +79,7 @@ void lipid_picker(membrane leaflet, int c1[2], int c2[2]) {
 
 
 double monte_carlo_move(membrane& current, membrane& opposing, int* a, int* b) {
-
+	
 	// calculate initial energy
 	double Ei = local_energy(current, opposing, a) + local_energy(current, opposing, b);
 

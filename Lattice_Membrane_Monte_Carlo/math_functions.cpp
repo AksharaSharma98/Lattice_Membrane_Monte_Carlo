@@ -6,7 +6,7 @@
 #include "math_functions.h"
 
 // set RNG seed
-std::mt19937 mt(1729);
+std::mt19937 mt(1790);
 std::uniform_real_distribution<double> uniform(0.0, 1.0);
 
 

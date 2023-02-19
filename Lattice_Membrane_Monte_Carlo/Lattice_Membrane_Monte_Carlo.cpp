@@ -24,7 +24,7 @@
 using namespace std;
 
 // global variables
-double kT = 1.0;
+double kT = 0.1;
 
 // initialize forcefield
 parameters forcefield;
@@ -49,7 +49,7 @@ int main()
 	membrane lower(n, species[1], pop[1], tail[1], 2);
 	
 	// system evolution
-	evolve_mc(upper, lower, 1000000, 1, 1000);
+	evolve_mc(upper, lower, 100000, 100, 100);
 
 	// testing
 
