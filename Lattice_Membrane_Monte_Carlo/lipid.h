@@ -18,6 +18,8 @@ public:
 
 	// modifier functions
 
+	void updatetail_order(double s_new);
+
 protected:
 	std::string species;
 	double s;

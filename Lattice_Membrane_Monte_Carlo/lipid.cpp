@@ -1,6 +1,3 @@
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string>
 
 #include "lipid.h"
@@ -43,3 +40,6 @@ int* lipid::getposition() {
 
 // modifier functions
 
+void lipid::updatetail_order(double s_new) {
+	s = s_new;
+}

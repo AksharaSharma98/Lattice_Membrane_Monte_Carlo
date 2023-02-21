@@ -6,25 +6,20 @@
 #include <math.h>
 #include <time.h>
 #include <string>
-#include <map>
 
 // program header files
 
-#include "lipid.h"
+//#include "lipid.h"
 #include "membrane.h"
 #include "parameters.h"
 #include "evolution.h"
-#include "math_functions.h"
-#include "output.h"
-#include "qol_functions.h"
 #include "Lattice_Membrane_Monte_Carlo.h"
-#include "periodicboundary.h"
 
 
 using namespace std;
 
 // global variables
-double kT = 0.1;
+double kT = 1.0;
 
 // initialize forcefield
 parameters forcefield;
@@ -49,9 +44,9 @@ int main()
 	membrane lower(n, species[1], pop[1], tail[1], 2);
 	
 	// system evolution
-	evolve_mc(upper, lower, 100000, 100, 100);
+	evolve_mc(upper, lower, 10, 1, 1);
 
-	// testing
+	// testing (temporary)
 
 	// wrap-up
 
