@@ -4,6 +4,7 @@
 #include "parameters.h"
 
 extern parameters forcefield;
+extern double e;
 extern double kT;
 extern int n_sp;
 //extern int n;

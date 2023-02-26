@@ -23,7 +23,7 @@ void evolve_mc(membrane& upper, membrane& lower, int steps, int tailorder_update
 	energy_file = fopen("energy.txt", "w+");
 	//fprintf(config_file, "header");                         // insert function to write header
 	
-	double energy = system_energy(upper, lower);
+	double energy = system_energy(upper, lower) / e; printf("System energy = %lf\n", energy);
 	int c1[2] = {0,0}, c2[2] = {0,0};
 	//std::vector<std::vector<int>> swap_sites_upper(2, std::vector<int>(0, 0));
 	//std::vector<std::vector<int>> swap_sites_lower(2, std::vector<int>(0, 0));
@@ -34,15 +34,15 @@ void evolve_mc(membrane& upper, membrane& lower, int steps, int tailorder_update
 
 		// pick non-degenerate lipids to exchange, attempt a monte-carlo exchange move
 		lipid_picker(upper, c1, c2);
-		energy += monte_carlo_move(upper, lower, c1, c2);// , swap_sites_upper);
-		energy += update_tailorder_mc(upper, lower, c1);
-		energy += update_tailorder_mc(upper, lower, c2);
+		energy += monte_carlo_move(upper, lower, c1, c2)/e;// , swap_sites_upper);
+		energy += update_tailorder_mc(upper, lower, c1)/e;
+		energy += update_tailorder_mc(upper, lower, c2)/e;
 
 		// pick non-degenerate lipids to exchange, attempt a monte-carlo exchange move
 		lipid_picker(lower, c1, c2);
-		energy += monte_carlo_move(lower, upper, c1, c2);// , swap_sites_lower);
-		energy += update_tailorder_mc(lower, upper, c1);
-		energy += update_tailorder_mc(lower, upper, c2);
+		energy += monte_carlo_move(lower, upper, c1, c2)/e;// , swap_sites_lower);
+		energy += update_tailorder_mc(lower, upper, c1)/e;
+		energy += update_tailorder_mc(lower, upper, c2)/e;
 
 		// update system tail orders at specified frequency
 		/*if (t % tailorder_update_freq == 0) {

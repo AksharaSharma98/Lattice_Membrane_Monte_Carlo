@@ -14,7 +14,7 @@ class membrane {
 
 public:
 	// default constructor, destructor
-	membrane(int n, std::string* sp, int* pop, int sp_num);
+	membrane(int n, std::string* sp, int* pop);
 	~membrane();
 
 	// accessor functions

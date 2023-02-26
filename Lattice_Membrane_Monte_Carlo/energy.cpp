@@ -74,7 +74,12 @@ double local_planeentropy_lipid(membrane& current, int* x) {
 	std::vector<double> phi(n_sp, 0.0);
 	mole_fraction_plane(current, x, phi, nbs);
 	for (int i = 0; i < n_sp; i++) {
-		temp += phi[i] * log(phi[i]);
+		if (phi[i] == 0.0) {
+			temp += 0.0;
+		}
+		else {
+			temp += phi[i] * log(phi[i]);
+		}
 	}
 
 	return epss * kT * temp;
@@ -111,7 +116,12 @@ double local_interentropy_lipid(membrane& current, membrane& opposing, int* x) {
 	std::vector<double> phi(n_sp, 0.0);
 	mole_fraction_total(current, opposing, x, phi, nbs);
 	for (int i = 0; i < n_sp; i++) {
-		temp += phi[i] * log(phi[i]);
+		if (phi[i] == 0.0) {
+			temp += 0.0;
+		}
+		else {
+			temp += phi[i] * log(phi[i]);
+		}
 	}
 
 	return epss*kT*temp;

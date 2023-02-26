@@ -10,29 +10,29 @@
 parameters::parameters() {
 
 	// Note: Both possible combinations of a pair-key must be added unless they are the same
-	plane_pair_energy = { {std::make_pair("DPPC","DPPC"), -2.0},
-						  {std::make_pair("DIPC","DIPC"), -0.8},
-						  {std::make_pair("CHOL","CHOL"), -0.5},
-						  {std::make_pair("DPPC","DIPC"), -1.2},
-						  {std::make_pair("DIPC","DPPC"), -1.2},
-						  {std::make_pair("DPPC","CHOL"), -1.0},
-						  {std::make_pair("CHOL","DPPC"), -1.0},
-						  {std::make_pair("CHOL","DIPC"), -1.0},
-						  {std::make_pair("DIPC","CHOL"), -1.0} };
+	plane_pair_energy = { {std::make_pair("DPPC","DPPC"), -16.0},// ~4.4 for 1 reduced unit interaction energy
+						  {std::make_pair("DIPC","DIPC"), -13.0},
+						  {std::make_pair("CHOL","CHOL"), -6.0},
+						  {std::make_pair("DPPC","DIPC"), -13.0},
+						  {std::make_pair("DIPC","DPPC"), -13.0},
+						  {std::make_pair("DPPC","CHOL"), -10.0},
+						  {std::make_pair("CHOL","DPPC"), -10.0},
+						  {std::make_pair("CHOL","DIPC"), -8.0},
+						  {std::make_pair("DIPC","CHOL"), -8.0} };
 
-	inter_pair_energy = { {std::make_pair("DPPC","DPPC"), -1.0},
-						  {std::make_pair("DIPC","DIPC"), -2.0},
+	inter_pair_energy = { {std::make_pair("DPPC","DPPC"), -10.0},
+						  {std::make_pair("DIPC","DIPC"), -20.0},
 						  {std::make_pair("CHOL","CHOL"), 0.0},
-						  {std::make_pair("DPPC","DIPC"), -1.5},
-						  {std::make_pair("DIPC","DPPC"), -1.5},
+						  {std::make_pair("DPPC","DIPC"), -12.0},
+						  {std::make_pair("DIPC","DPPC"), -12.0},
 						  {std::make_pair("DPPC","CHOL"), 0.0},
 						  {std::make_pair("CHOL","DPPC"), 0.0},
 						  {std::make_pair("CHOL","DIPC"), 0.0},
 						  {std::make_pair("DIPC","CHOL"), 0.0} };
 
-	plane_entropy_const = 1.0;
+	plane_entropy_const = 0.06;
 
-	inter_entropy_const = 5.0;
+	inter_entropy_const = 0.04;
 
 	tail_order_bins = { {"DPPC",{-0.5,-0.35,-0.2,-0.05,0.1,0.25,0.4,0.55,0.7,0.85,1.0}},
 						{"DIPC",{-0.5,-0.35,-0.2,-0.05,0.1,0.25,0.4,0.55,0.7,0.85,1.0}},

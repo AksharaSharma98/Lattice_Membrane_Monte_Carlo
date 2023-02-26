@@ -20,7 +20,8 @@
 using namespace std;
 
 // global variables
-double kT = 1.0;
+double e = 0.3;
+double kT = 2.048;
 int n_sp = 3;
 int n = 40;
 std::string species[2][3] = { {"DPPC", "DIPC", "CHOL"},
@@ -38,11 +39,11 @@ int main()
 	clock_t clkStart = clock();
 
 	// system initialization
-	membrane upper(n, species[0], pop[0], n_sp);
-	membrane lower(n, species[1], pop[1], n_sp); printf("Completed system setup\n");
+	membrane upper(n, species[0], pop[0]);
+	membrane lower(n, species[1], pop[1]); printf("Completed system setup\n");
 	// system evolution
 	printf("Starting MC evolution\n");
-	evolve_mc(upper, lower, 100000, 1, 10, 10000);
+	evolve_mc(upper, lower, 100, 1, 1, 1);
 
 	// testing (temporary)
 	
