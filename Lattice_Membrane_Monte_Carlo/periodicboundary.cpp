@@ -21,7 +21,7 @@
 
 // returns pbc-corrected grid coordinates of neighbours on the hex-grid
 // 0: top-left, 1: top-right, 2: left, 3: right, 4:bottom-left, 5: bottom-right
-void periodic_neighbours(membrane leaflet, int i, int j, int nbs[][2]) {
+void periodic_neighbours(membrane& leaflet, int i, int j, int nbs[][2]) {
 	
 	int n = leaflet.getgrid().size();
 

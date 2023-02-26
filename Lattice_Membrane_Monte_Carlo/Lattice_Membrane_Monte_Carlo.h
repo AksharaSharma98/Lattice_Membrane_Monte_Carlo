@@ -5,5 +5,8 @@
 
 extern parameters forcefield;
 extern double kT;
+extern int n_sp;
+//extern int n;
+extern std::string species[2][3];
 
 #endif

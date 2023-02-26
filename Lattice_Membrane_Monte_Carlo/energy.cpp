@@ -8,32 +8,33 @@
 #include "membrane.h"
 #include "parameters.h"
 #include "periodicboundary.h"
+#include "math_functions.h"
 #include "Lattice_Membrane_Monte_Carlo.h"
 
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 
-double system_energy(membrane upper, membrane lower) {
+double system_energy(membrane& upper, membrane& lower) {
 
 	int n = upper.getgrid().size();
-	double energy = 0.0;
+	double enthalpy = 0.0, entropy = 0.0;
 
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			int x[2] = { i,j };
-			energy += local_energy(upper, lower, x);
-			energy += local_energy(lower, upper, x);
+			enthalpy += local_enthalpy(upper, lower, x) + local_enthalpy(lower, upper, x);
+			entropy += 2*local_entropy_lipid(lower, upper, x);
 		}
 	}
 	
-	return 0.5*energy;
+	return 0.5*enthalpy + entropy;
 	// *** Very Important ***
 	// verify if *0.5 is still correct after any Hamiltonian modificaitons
 }
 
 
-double local_energy(membrane current, membrane opposing, int* x) {
+double local_enthalpy(membrane& current, membrane& opposing, int* x) {
 
 	std::string c, o, cn;
 	double sc, so, scn;
@@ -59,4 +60,41 @@ double local_energy(membrane current, membrane opposing, int* x) {
 	loc_e_inter += epsi* sc* so;                                              // e_p = eps'_ii*s_i*s'_i
 	
 	return loc_e_plane + loc_e_inter;
+}
+
+double local_entropy_lipid(membrane& current, membrane& opposing, int* x) {
+
+	double temp = 0.0;
+	double epss = forcefield.getplane_entropy_const();
+	int nbs[6][2] = { {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0} };
+
+	periodic_neighbours(current, x[0], x[1], nbs);
+
+	std::vector<double> phi(n_sp, 0.0);
+	mole_fraction(current, opposing, x, phi, nbs);
+	for (int i = 0; i < n_sp; i++) {
+		temp += phi[i] * log(phi[i]);
+	}
+
+	return epss*kT*temp;
+}
+
+double local_entropy_env(membrane& current, membrane& opposing, int* x) {
+
+	double loc_e_plane = 0.0;
+	double epss = forcefield.getplane_entropy_const();
+	int nbs[6][2] = { {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0} };
+
+	periodic_neighbours(current, x[0], x[1], nbs);
+
+	for (int i = -1; i < 6; i++) {
+		if (i == -1) {
+			loc_e_plane += 2*local_entropy_lipid(current, opposing, x);
+		}
+		else {
+			loc_e_plane += 2* local_entropy_lipid(current, opposing, nbs[i]);
+		}
+	}
+
+	return loc_e_plane;
 }

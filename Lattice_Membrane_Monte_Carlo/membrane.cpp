@@ -9,7 +9,7 @@
 
 // default constructor
 
-membrane::membrane (int n, std::string* sp, int* pop, double* tail, int sp_num)
+membrane::membrane (int n, std::string* sp, int* pop, int sp_num)
 {
 	assert(n%2 == 0 && "Grid size must be even");
 	assert(n >= 1 && "Invalid grid size");
@@ -35,7 +35,8 @@ membrane::membrane (int n, std::string* sp, int* pop, double* tail, int sp_num)
 				}
 			}
 			int position[2] = { i,j };
-			lipid a(sp[l], tail[l], position);
+			double s = sample_tailorder(sp[l], -1.0);
+			lipid a(sp[l], s, position);
 			grid[i].push_back(a);
 			count[l] += 1;
 		}
@@ -73,4 +74,9 @@ void membrane::swap(int* a, int* b) {
 	lipid l = grid[a[0]][a[1]];
 	grid[a[0]][a[1]] = grid[b[0]][b[1]];
 	grid[b[0]][b[1]] = l;
+}
+
+
+void membrane::tail_update(int* a, double s_new) {
+	grid[a[0]][a[1]].update_tailorder(s_new);
 }

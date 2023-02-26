@@ -40,6 +40,6 @@ int* lipid::getposition() {
 
 // modifier functions
 
-void lipid::updatetail_order(double s_new) {
+void lipid::update_tailorder(double s_new) {
 	s = s_new;
 }

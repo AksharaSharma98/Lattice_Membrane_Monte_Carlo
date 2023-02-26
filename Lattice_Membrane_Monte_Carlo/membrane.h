@@ -14,7 +14,7 @@ class membrane {
 
 public:
 	// default constructor, destructor
-	membrane(int n, std::string* sp, int* pop, double* tail, int sp_num);
+	membrane(int n, std::string* sp, int* pop, int sp_num);
 	~membrane();
 
 	// accessor functions
@@ -25,6 +25,7 @@ public:
 
 	// modifier functions
 	void swap(int* a, int* b);
+	void tail_update(int* a, double s_new);
 
 protected:
 

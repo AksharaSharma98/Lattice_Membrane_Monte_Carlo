@@ -19,7 +19,9 @@ public:
 
 	double getinter_pair_energy(std::pair <std::string, std::string> species_pair);
 
-	std::vector<double> tailorder_dist(std::string species);
+	double getplane_entropy_const();
+
+	std::vector<double> tailorder_bins(std::string species);
 
 	std::vector<double> tailorder_weights(std::string species);
 
@@ -33,8 +35,10 @@ protected:
 	// map that contains pairwise interleaflet interaction energy values for a species-pair string key
 	std::map<std::pair<std::string, std::string>, double> inter_pair_energy;
 
+	double plane_entropy_const;
+
 	// map that contains tail-order distribution values for each species string key
-	std::map<std::string, std::vector<double>> tail_order_dist;
+	std::map<std::string, std::vector<double>> tail_order_bins;
 	// map that contains tail-order distribution weights for each species string key
 	std::map<std::string, std::vector<double>> tail_order_weights;
 
