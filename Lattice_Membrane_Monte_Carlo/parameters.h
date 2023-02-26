@@ -21,6 +21,8 @@ public:
 
 	double getplane_entropy_const();
 
+	double getinter_entropy_const();
+
 	std::vector<double> tailorder_bins(std::string species);
 
 	std::vector<double> tailorder_weights(std::string species);
@@ -36,6 +38,7 @@ protected:
 	std::map<std::pair<std::string, std::string>, double> inter_pair_energy;
 
 	double plane_entropy_const;
+	double inter_entropy_const;
 
 	// map that contains tail-order distribution values for each species string key
 	std::map<std::string, std::vector<double>> tail_order_bins;

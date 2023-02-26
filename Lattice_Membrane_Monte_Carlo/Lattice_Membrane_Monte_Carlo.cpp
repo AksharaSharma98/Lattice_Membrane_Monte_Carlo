@@ -22,11 +22,11 @@ using namespace std;
 // global variables
 double kT = 1.0;
 int n_sp = 3;
-int n = 100;
+int n = 40;
 std::string species[2][3] = { {"DPPC", "DIPC", "CHOL"},
 							  {"DPPC", "DIPC", "CHOL"} };
-int pop[2][3] = { {4000, 3000, 3000},
-				  {4000, 3000, 3000} };
+int pop[2][3] = { {640, 480, 480},
+				  {640, 480, 480} };
 
 // initialize forcefield
 parameters forcefield;
@@ -42,7 +42,7 @@ int main()
 	membrane lower(n, species[1], pop[1], n_sp); printf("Completed system setup\n");
 	// system evolution
 	printf("Starting MC evolution\n");
-	evolve_mc(upper, lower, 100000, 1, 1, 10000);
+	evolve_mc(upper, lower, 100000, 1, 10, 10000);
 
 	// testing (temporary)
 	

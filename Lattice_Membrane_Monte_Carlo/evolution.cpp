@@ -129,14 +129,16 @@ double monte_carlo_move(membrane& current, membrane& opposing, int* a, int* b) {
 	
 	// calculate initial energy
 	double Ei = local_enthalpy(current, opposing, a) + local_enthalpy(current, opposing, b);
-	Ei += local_entropy_env(current, opposing, a) + local_entropy_env(current, opposing, b);
+	Ei += local_planeentropy_env(current, a) + local_planeentropy_env(current, b);
+	Ei += local_interentropy_env(current, opposing, a) + local_interentropy_env(current, opposing, b);
 
 	// swap lipids specified for the move
 	current.swap(a, b);
 
 	// calculate final energy, energy difference
 	double Ef = local_enthalpy(current, opposing, a) + local_enthalpy(current, opposing, b);
-	Ef += local_entropy_env(current, opposing, a) + local_entropy_env(current, opposing, b);
+	Ef += local_planeentropy_env(current, a) + local_planeentropy_env(current, b);
+	Ef += local_interentropy_env(current, opposing, a) + local_interentropy_env(current, opposing, b);
 	double delE = Ef - Ei;
 
 	// accept/reject attempted move
@@ -176,14 +178,14 @@ double update_tailorder_mc(membrane& current, membrane& opposing, int* a) {
 	
 	// calculate initial energy
 	double si = l.gettail_order();
-	double Ei = local_enthalpy(current, opposing, a) + local_entropy_env(current, opposing, a);
+	double Ei = local_enthalpy(current, opposing, a) + local_planeentropy_env(current, a) + local_interentropy_env(current, opposing, a);
 
 	// sample a new tail order value
 	double sf = sample_tailorder(l.getspecies(), si);
 	current.tail_update(a, sf);
 
 	// calculate final energy, energy difference
-	double Ef = local_enthalpy(current, opposing, a) + local_entropy_env(current, opposing, a);
+	double Ef = local_enthalpy(current, opposing, a) + local_planeentropy_env(current, a) + local_interentropy_env(current, opposing, a);
 	double delE = Ef - Ei;
 
 	// accept/reject attempted tail order update

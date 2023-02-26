@@ -24,7 +24,8 @@ double system_energy(membrane& upper, membrane& lower) {
 		for (int j = 0; j < n; j++) {
 			int x[2] = { i,j };
 			enthalpy += local_enthalpy(upper, lower, x) + local_enthalpy(lower, upper, x);
-			entropy += 2*local_entropy_lipid(lower, upper, x);
+			entropy += local_planeentropy_lipid(upper, x) + local_planeentropy_lipid(lower, x);
+			entropy += 2 * local_interentropy_lipid(lower, upper, x);
 		}
 	}
 	
@@ -62,7 +63,7 @@ double local_enthalpy(membrane& current, membrane& opposing, int* x) {
 	return loc_e_plane + loc_e_inter;
 }
 
-double local_entropy_lipid(membrane& current, membrane& opposing, int* x) {
+double local_planeentropy_lipid(membrane& current, int* x) {
 
 	double temp = 0.0;
 	double epss = forcefield.getplane_entropy_const();
@@ -71,15 +72,15 @@ double local_entropy_lipid(membrane& current, membrane& opposing, int* x) {
 	periodic_neighbours(current, x[0], x[1], nbs);
 
 	std::vector<double> phi(n_sp, 0.0);
-	mole_fraction(current, opposing, x, phi, nbs);
+	mole_fraction_plane(current, x, phi, nbs);
 	for (int i = 0; i < n_sp; i++) {
 		temp += phi[i] * log(phi[i]);
 	}
 
-	return epss*kT*temp;
+	return epss * kT * temp;
 }
 
-double local_entropy_env(membrane& current, membrane& opposing, int* x) {
+double local_planeentropy_env(membrane& current, int* x) {
 
 	double loc_e_plane = 0.0;
 	double epss = forcefield.getplane_entropy_const();
@@ -89,10 +90,47 @@ double local_entropy_env(membrane& current, membrane& opposing, int* x) {
 
 	for (int i = -1; i < 6; i++) {
 		if (i == -1) {
-			loc_e_plane += 2*local_entropy_lipid(current, opposing, x);
+			loc_e_plane += local_planeentropy_lipid(current, x);
 		}
 		else {
-			loc_e_plane += 2* local_entropy_lipid(current, opposing, nbs[i]);
+			loc_e_plane += local_planeentropy_lipid(current, nbs[i]);
+		}
+	}
+
+	return loc_e_plane;
+}
+
+double local_interentropy_lipid(membrane& current, membrane& opposing, int* x) {
+
+	double temp = 0.0;
+	double epss = forcefield.getinter_entropy_const();
+	int nbs[6][2] = { {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0} };
+
+	periodic_neighbours(current, x[0], x[1], nbs);
+
+	std::vector<double> phi(n_sp, 0.0);
+	mole_fraction_total(current, opposing, x, phi, nbs);
+	for (int i = 0; i < n_sp; i++) {
+		temp += phi[i] * log(phi[i]);
+	}
+
+	return epss*kT*temp;
+}
+
+double local_interentropy_env(membrane& current, membrane& opposing, int* x) {
+
+	double loc_e_plane = 0.0;
+	double epss = forcefield.getinter_entropy_const();
+	int nbs[6][2] = { {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0} };
+
+	periodic_neighbours(current, x[0], x[1], nbs);
+
+	for (int i = -1; i < 6; i++) {
+		if (i == -1) {
+			loc_e_plane += 2*local_interentropy_lipid(current, opposing, x);
+		}
+		else {
+			loc_e_plane += 2*local_interentropy_lipid(current, opposing, nbs[i]);
 		}
 	}
 

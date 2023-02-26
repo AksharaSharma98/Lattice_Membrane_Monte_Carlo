@@ -53,7 +53,33 @@ double sample_tailorder(std::string species, double s_old) {
 }
 
 
-void mole_fraction(membrane& current, membrane& opposing, int* x, std::vector<double>& phi, int nbs[][2]) {
+void mole_fraction_plane(membrane& current, int* x, std::vector<double>& phi, int nbs[][2]) {
+
+	std::string lc;
+
+	std::vector<double> count(n_sp, 0.0);
+	for (int i = -1; i < 6; i++) {
+		if (i == -1) {
+			lc = current.getlipid(x[0], x[1]).getspecies();
+		}
+		else {
+			lc = current.getlipid(nbs[i][0], nbs[i][1]).getspecies();
+		}
+
+		for (int j = 0; j < n_sp; j++) {
+			if (lc == species[0][j]) {
+				count[j] += 1.0;
+			}
+		}
+
+		for (int j = 0; j < n_sp; j++) {
+			phi[j] = count[j] / 7.0;
+		}
+	}
+}
+
+
+void mole_fraction_total(membrane& current, membrane& opposing, int* x, std::vector<double>& phi, int nbs[][2]) {
 
 	std::string lc, lo;
 
@@ -81,5 +107,4 @@ void mole_fraction(membrane& current, membrane& opposing, int* x, std::vector<do
 			phi[j] = count[j] / 14.0;
 		}
 	}
-
 }
