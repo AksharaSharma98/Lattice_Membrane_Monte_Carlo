@@ -49,4 +49,7 @@ protected:
 	std::map<std::string, int> output_type;
 };
 
+// file input for pair energy parameters
+void read_pair_energy(const std::string& domain, std::map<std::pair<std::string, std::string>, double>& pair_energy);
+
 #endif

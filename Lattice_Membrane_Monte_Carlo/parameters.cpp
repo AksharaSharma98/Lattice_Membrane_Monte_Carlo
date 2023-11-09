@@ -1,34 +1,27 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <fstream>
+#include <sstream>
+#include <iostream>   // temporary, for dev only
 
 #include "parameters.h"
 
 
+// parameters class
+// 
 // default constructor
 
 parameters::parameters() {
 
-	// Note: Both possible combinations of a pair-key must be added unless they are the same
-	plane_pair_energy = { {std::make_pair("DPPC","DPPC"), -16.0},// ~4.4 for 1 reduced unit interaction energy
-						  {std::make_pair("DIPC","DIPC"), -13.0},
-						  {std::make_pair("CHOL","CHOL"), -6.0},
-						  {std::make_pair("DPPC","DIPC"), -13.0},
-						  {std::make_pair("DIPC","DPPC"), -13.0},
-						  {std::make_pair("DPPC","CHOL"), -10.0},
-						  {std::make_pair("CHOL","DPPC"), -10.0},
-						  {std::make_pair("CHOL","DIPC"), -8.0},
-						  {std::make_pair("DIPC","CHOL"), -8.0} };
+	read_pair_energy("plane", plane_pair_energy);
+	read_pair_energy("inter", inter_pair_energy);
 
-	inter_pair_energy = { {std::make_pair("DPPC","DPPC"), -10.0},
-						  {std::make_pair("DIPC","DIPC"), -20.0},
-						  {std::make_pair("CHOL","CHOL"), 0.0},
-						  {std::make_pair("DPPC","DIPC"), -12.0},
-						  {std::make_pair("DIPC","DPPC"), -12.0},
-						  {std::make_pair("DPPC","CHOL"), 0.0},
-						  {std::make_pair("CHOL","DPPC"), 0.0},
-						  {std::make_pair("CHOL","DIPC"), 0.0},
-						  {std::make_pair("DIPC","CHOL"), 0.0} };
+	// map output to test if it was built correctly
+	/*for (auto it = plane_pair_energy.cbegin(); it != plane_pair_energy.cend(); ++it)
+	{
+		printf("(%s,%s) -> %lf\n",it->first.first.c_str(), it->first.second.c_str(), it->second);
+	}*/
 
 	plane_entropy_const = 0.06;
 
@@ -36,7 +29,7 @@ parameters::parameters() {
 
 	tail_order_bins = { {"DPPC",{-0.5,-0.35,-0.2,-0.05,0.1,0.25,0.4,0.55,0.7,0.85,1.0}},
 						{"DIPC",{-0.5,-0.35,-0.2,-0.05,0.1,0.25,0.4,0.55,0.7,0.85,1.0}},
-						{"CHOL",{0.25,0.3}} };
+						{"CHOL",{0.4,0.45}} };
 
 	tail_order_weights = { {"DPPC",{0.0,0.0,0.0,0.0,0.17,0.29,0.36,0.15,0.03,0.0}},
 						   {"DIPC",{0.0,0.0,0.07,0.25,0.41,0.20,0.07,0.0,0.0,0.0}},
@@ -82,4 +75,50 @@ std::vector<double> parameters::tailorder_weights(std::string species) {
 
 int parameters::getoutput_type(std::string species) {
 	return output_type[species];
+}
+
+
+// IO functions for parameter class
+
+void read_pair_energy(const std::string& domain, std::map<std::pair<std::string, std::string>, double>& pair_energy) {
+
+	std::ifstream file("Parameters.txt");
+	bool read_complete = false;
+	std::string section_marker = "#" + domain;
+	
+	if (file.is_open()) {
+		std::string line;
+
+		while (std::getline(file, line) && !read_complete) {
+			
+			if (line.find(section_marker) != std::string::npos) {
+				
+				while (std::getline(file, line)) {
+					if (line.empty())
+					{
+						read_complete = true;
+						break;
+					}
+					else if (line.rfind("#", 0) != 0)
+					{
+						std::string lipid1, lipid2;
+						double interaction_param;
+						std::istringstream line_string(line);
+
+						line_string >> lipid1 >> lipid2 >> interaction_param;
+
+						// Note: Both possible combinations of a pair-key must be added for ease of use
+						pair_energy.insert({ std::make_pair(lipid1,lipid2), interaction_param });
+						pair_energy.insert({ std::make_pair(lipid2,lipid1), interaction_param });
+					}
+				}
+			}
+		}
+		file.close();
+	}
+	/*for (auto it = pair_energy.cbegin(); it != pair_energy.cend(); ++it)
+	{
+		printf("(%s,%s) -> %lf\n", it->first.first.c_str(), it->first.second.c_str(), it->second);
+	}
+	printf("\n");*/
 }
