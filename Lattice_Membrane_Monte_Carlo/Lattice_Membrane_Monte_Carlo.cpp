@@ -12,6 +12,7 @@
 //#include "lipid.h"
 #include "membrane.h"
 #include "parameters.h"
+#include "system.h"
 #include "evolution.h"
 #include "Lattice_Membrane_Monte_Carlo.h"
 
@@ -32,6 +33,9 @@ int pop[2][3] = { {4000, 3000, 3000},
 // initialize forcefield
 parameters forcefield;
 
+// initialize system
+System sys;
+
 
 int main()
 {
@@ -39,12 +43,12 @@ int main()
 	clock_t clkStart = clock();
 
 	// system initialization
-	membrane upper(n, species[0], pop[0]);
-	membrane lower(n, species[1], pop[1]); printf("Completed system setup\n");
+	//membrane upper(n, species[0], pop[0]);
+	//membrane lower(n, species[1], pop[1]); printf("Completed system setup\n");
 
 	// system evolution
 	printf("Starting MC evolution\n");
-	evolve_mc(upper, lower, 100000, 1, 100, 1000);
+	//evolve_mc(upper, lower, 100000, 1, 100, 1000);
 
 	// testing (temporary)
 	

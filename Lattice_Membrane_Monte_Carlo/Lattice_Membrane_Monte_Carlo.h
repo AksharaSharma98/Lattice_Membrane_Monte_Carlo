@@ -2,8 +2,10 @@
 #define lattice_membrane_mc_h
 
 #include "parameters.h"
+#include "system.h"
 
 extern parameters forcefield;
+extern System sys;
 extern double e;
 extern double kT;
 extern int n_sp;
