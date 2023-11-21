@@ -24,7 +24,7 @@ System::System() {
 		printf("\n");
 	}*/
 
-	num_species = 3;
+	num_species = species[0].size();
 	grid_size = 100;
 
 }
@@ -34,6 +34,14 @@ System::~System() {
 }
 
 // accessor functions
+
+int System::get_num_species() {
+	return num_species;
+}
+
+int System::get_grid_size() {
+	return grid_size;
+}
 
 std::string System::get_species(int leaflet, int i) {
 	return species[leaflet][i];

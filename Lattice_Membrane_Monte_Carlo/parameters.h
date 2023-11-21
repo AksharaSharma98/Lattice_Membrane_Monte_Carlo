@@ -1,17 +1,17 @@
-#ifndef parameters_h
-#define parameters_h
+#ifndef Parameters_h
+#define Parameters_h
 
 #include <string>
 #include <vector>
 #include <map>
 
 
-class parameters {
+class Parameters {
 public:
 	// default constructor, destructor
 
-	parameters();
-	~parameters();
+	Parameters();
+	~Parameters();
 
 	// accessor functions
 

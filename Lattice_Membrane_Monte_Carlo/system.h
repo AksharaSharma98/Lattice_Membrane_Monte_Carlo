@@ -13,6 +13,11 @@ public:
 	~System();
 
 	// accessor functions
+
+	int get_num_species();
+
+	int get_grid_size();
+
 	std::string get_species(int leaflet, int i);
 
 	int get_population(int leaflet, int i);

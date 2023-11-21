@@ -10,17 +10,18 @@
 
 // default constructor
 
-membrane::membrane (int n, std::string* sp, int* pop)
+membrane::membrane (int leaflet)
 {
-	assert(n%2 == 0 && "Grid size must be even");
-	assert(n >= 1 && "Invalid grid size");
-	size = n;
+	size = sys.get_grid_size();
+	int num_species = sys.get_num_species();
+	assert(size%2 == 0 && "Grid size must be even");
+	assert(size >= 1 && "Invalid grid size");
 
 	// initialize grid of lipids
 
-	std::vector<std::vector<int>> matrix(n, std::vector<int>(n, -1));
+	std::vector<std::vector<int>> matrix(size, std::vector<int>(size, -1));
 	std::vector<int> count;
-	for (int i = 0; i < n_sp; i++) {
+	for (int i = 0; i < num_species; i++) {
 		count.push_back(0);
 	}
 
@@ -29,16 +30,16 @@ membrane::membrane (int n, std::string* sp, int* pop)
 	while (full == false) {
 		bool valid_position = false;
 		while (valid_position == false) {
-			x = rand_int(0, n - 1);
-			y = rand_int(0, n - 1);
+			x = rand_int(0, size - 1);
+			y = rand_int(0, size - 1);
 			if (matrix[x][y] == -1) {
 				valid_position = true;
 			}
 		}
 		bool valid_species = false;
 		while (valid_species == false) {
-			l = rand_int(0, n_sp - 1);
-			if (count[l] < pop[l]) {
+			l = rand_int(0, num_species - 1);
+			if (count[l] < sys.get_population(leaflet,l)) {
 				valid_species = true;
 			}
 		}
@@ -47,20 +48,20 @@ membrane::membrane (int n, std::string* sp, int* pop)
 			count[l] += 1;
 			total += 1;
 		}
-		if (total == n * n) {
+		if (total == size*size) {
 			full = true;
 		}
 	}
 
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < size; i++) {
 		grid.push_back(Array());
 	}
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
 			l = matrix[i][j];
 			int position[2] = { i,j };
-			double s = sample_tailorder(sp[l], -1.0);
-			lipid a(sp[l], s, position);
+			double s = sample_tailorder(sys.get_species(leaflet,l), -1.0);
+			lipid a(sys.get_species(leaflet,l), s, position);
 			grid[i].push_back(a);  // vector.push_back(value) appends value at end of vector
 			count[l] += 1;
 		}

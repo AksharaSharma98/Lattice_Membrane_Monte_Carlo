@@ -12,7 +12,7 @@
 // 
 // default constructor
 
-parameters::parameters() {
+Parameters::Parameters() {
 
 	read_pair_energy("plane", plane_pair_energy);
 	read_pair_energy("inter", inter_pair_energy);
@@ -42,38 +42,38 @@ parameters::parameters() {
 
 // default destructor
 
-parameters::~parameters() {
+Parameters::~Parameters() {
 
 }
 
 
 // accessor functions
 
-double parameters::getplane_pair_energy(std::pair <std::string, std::string> species_pair) {
+double Parameters::getplane_pair_energy(std::pair <std::string, std::string> species_pair) {
 	return plane_pair_energy[species_pair];
 }
 
-double parameters::getinter_pair_energy(std::pair <std::string, std::string> species_pair) {
+double Parameters::getinter_pair_energy(std::pair <std::string, std::string> species_pair) {
 	return inter_pair_energy[species_pair];
 }
 
-double parameters::getplane_entropy_const() {
+double Parameters::getplane_entropy_const() {
 	return plane_entropy_const;
 }
 
-double parameters::getinter_entropy_const() {
+double Parameters::getinter_entropy_const() {
 	return inter_entropy_const;
 }
 
-std::vector<double> parameters::tailorder_bins(std::string species) {
+std::vector<double> Parameters::tailorder_bins(std::string species) {
 	return tail_order_bins[species];
 }
 
-std::vector<double> parameters::tailorder_weights(std::string species) {
+std::vector<double> Parameters::tailorder_weights(std::string species) {
 	return tail_order_weights[species];
 }
 
-int parameters::getoutput_type(std::string species) {
+int Parameters::getoutput_type(std::string species) {
 	return output_type[species];
 }
 
@@ -116,9 +116,4 @@ void read_pair_energy(const std::string& domain, std::map<std::pair<std::string,
 		}
 		file.close();
 	}
-	/*for (auto it = pair_energy.cbegin(); it != pair_energy.cend(); ++it)
-	{
-		printf("(%s,%s) -> %lf\n", it->first.first.c_str(), it->first.second.c_str(), it->second);
-	}
-	printf("\n");*/
 }

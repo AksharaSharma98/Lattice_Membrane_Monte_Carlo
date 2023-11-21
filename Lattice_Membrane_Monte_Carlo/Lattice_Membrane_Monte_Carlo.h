@@ -4,12 +4,12 @@
 #include "parameters.h"
 #include "system.h"
 
-extern parameters forcefield;
+extern Parameters forcefield;
 extern System sys;
 extern double e;
 extern double kT;
-extern int n_sp;
+//extern int n_sp;
 //extern int n;
-extern std::string species[2][3];
+//extern std::string species[2][3];
 
 #endif

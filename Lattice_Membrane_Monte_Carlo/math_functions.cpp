@@ -56,6 +56,7 @@ double sample_tailorder(std::string species, double s_old) {
 void mole_fraction_plane(membrane& current, int* x, std::vector<double>& phi, int nbs[][2]) {
 
 	std::string lc;
+	int n_sp = sys.get_num_species();
 
 	std::vector<double> count(n_sp, 0.0);
 	for (int i = -1; i < 6; i++) {
@@ -67,7 +68,7 @@ void mole_fraction_plane(membrane& current, int* x, std::vector<double>& phi, in
 		}
 
 		for (int j = 0; j < n_sp; j++) {
-			if (lc == species[0][j]) {
+			if (lc == sys.get_species(0,j)) {
 				count[j] += 1.0;
 			}
 		}
@@ -82,6 +83,7 @@ void mole_fraction_plane(membrane& current, int* x, std::vector<double>& phi, in
 void mole_fraction_total(membrane& current, membrane& opposing, int* x, std::vector<double>& phi, int nbs[][2]) {
 
 	std::string lc, lo;
+	int n_sp = sys.get_num_species();
 
 	std::vector<double> count(n_sp, 0.0);
 	for (int i = -1; i < 6; i++) {
@@ -95,10 +97,10 @@ void mole_fraction_total(membrane& current, membrane& opposing, int* x, std::vec
 		}
 		
 		for (int j = 0; j < n_sp; j++) {
-			if (lc == species[0][j]) {
+			if (lc == sys.get_species(0, j)) {
 				count[j] += 1.0;
 			}
-			if (lo == species[0][j]) {
+			if (lo == sys.get_species(0, j)) {
 				count[j] += 1.0;
 			}
 		}

@@ -7,6 +7,7 @@
 #include "lipid.h"
 #include "membrane.h"
 #include "parameters.h"
+#include "system.h"
 #include "periodicboundary.h"
 #include "math_functions.h"
 #include "Lattice_Membrane_Monte_Carlo.h"
@@ -71,9 +72,9 @@ double local_planeentropy_lipid(membrane& current, int* x) {
 
 	periodic_neighbours(current, x[0], x[1], nbs);
 
-	std::vector<double> phi(n_sp, 0.0);
+	std::vector<double> phi(sys.get_num_species(), 0.0);
 	mole_fraction_plane(current, x, phi, nbs);
-	for (int i = 0; i < n_sp; i++) {
+	for (int i = 0; i < sys.get_num_species(); i++) {
 		if (phi[i] == 0.0) {
 			temp += 0.0;
 		}
@@ -113,9 +114,9 @@ double local_interentropy_lipid(membrane& current, membrane& opposing, int* x) {
 
 	periodic_neighbours(current, x[0], x[1], nbs);
 
-	std::vector<double> phi(n_sp, 0.0);
+	std::vector<double> phi(sys.get_num_species(), 0.0);
 	mole_fraction_total(current, opposing, x, phi, nbs);
-	for (int i = 0; i < n_sp; i++) {
+	for (int i = 0; i < sys.get_num_species(); i++) {
 		if (phi[i] == 0.0) {
 			temp += 0.0;
 		}

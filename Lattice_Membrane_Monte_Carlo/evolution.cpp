@@ -150,10 +150,6 @@ double monte_carlo_move(membrane& current, membrane& opposing, int* a, int* b) {
 		return 0.0;
 	}
 	else {
-		//swap_sites[0].push_back(a[0]);
-		//swap_sites[1].push_back(a[1]);
-		//swap_sites[0].push_back(b[0]);
-		//swap_sites[1].push_back(b[1]);
 		return delE;
 	}
 }
