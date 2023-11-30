@@ -23,12 +23,6 @@ using namespace std;
 // global variables
 double e = 0.3;
 double kT = 2.048;
-/*int n_sp = 3;
-int n = 100;
-std::string species[2][3] = { {"DPPC", "DIPC", "CHOL"},
-							  {"DPPC", "DIPC", "CHOL"} };
-int pop[2][3] = { {4000, 3000, 3000},
-				  {4000, 3000, 3000} };*/
 
 // initialize forcefield
 Parameters forcefield;
@@ -51,7 +45,6 @@ int main()
 	evolve_mc(upper, lower, 1, 1, 1, 1);
 
 	// testing (temporary)
-	
 	
 	// wrap-up
 	clock_t clkFinish = clock();

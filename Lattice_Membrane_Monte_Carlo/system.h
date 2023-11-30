@@ -22,19 +22,39 @@ public:
 
 	int get_population(int leaflet, int i);
 
+	std::vector<int> get_swap_sizes();
+
+	std::vector<double> get_swap_weights();
+
 protected:
 	int num_species;
 	int grid_size;
 
 	// Vector of vectors containing the names of species in each leaflet
 	std::vector<std::vector<std::string>> species;
-
 	// Vector of vectors containing the corresponding population of each species in each leaflet
 	std::vector<std::vector<int>> population;
+
+	// Vector containing the different swap patch sizes to be used for MC swapping
+	std::vector<int> swap_sizes;
+	// Vector containing the different weights for the patch sizes
+	std::vector<double> swap_weights;
 
 };
 
 // file input for species names and corresponding populations
-void read_system_parameters(std::vector<std::vector<std::string>>& species, std::vector<std::vector<int>>& population);
+void read_system_parameters(std::vector<std::vector<std::string>>& species, std::vector<std::vector<int>>& population, std::vector<int>& swap_sizes, std::vector<double>& swap_weights, int& grid_size);
+
+// initializes the 2D lipid species vector with species names for each leaflet symmetrically
+void initialize_lipid_species(std::vector<std::vector<std::string>>& species, std::istringstream& line);
+
+// initializes the 2D lipid population vector with species populations for each leaflet symmetrically
+void initialize_lipid_populations(std::vector<std::vector<int>>& population, std::istringstream& line);
+
+// initializes the swap patch sizes vector
+void initialize_swap_sizes(std::vector<int>& swap_sizes, std::istringstream& line);
+
+// initializes the weights for the corresponding swap patch sizes
+void initialize_swap_weights(std::vector<double>& swap_weights, std::istringstream& line);
 
 #endif

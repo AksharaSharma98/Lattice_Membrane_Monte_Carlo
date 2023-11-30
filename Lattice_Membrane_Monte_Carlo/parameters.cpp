@@ -14,8 +14,8 @@
 
 Parameters::Parameters() {
 
-	read_pair_energy("plane", plane_pair_energy);
-	read_pair_energy("inter", inter_pair_energy);
+	read_pair_energy("Plane", plane_pair_energy);
+	read_pair_energy("Inter", inter_pair_energy);
 
 	// map output to test if it was built correctly
 	/*for (auto it = plane_pair_energy.cbegin(); it != plane_pair_energy.cend(); ++it)

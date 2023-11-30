@@ -33,6 +33,17 @@ int rand_int(int lower_bound, int upper_bound) {
 }
 
 
+// samples the swap patch size distribution
+int sample_swap_size() {
+	std::vector<int> sizes = sys.get_swap_sizes();
+	std::vector<double> weights = sys.get_swap_weights();
+
+	std::piecewise_constant_distribution<> dist(sizes.begin(), sizes.end(), weights.begin());
+
+	return dist(mt);
+}
+
+
 // samples the average S_CD distribution for a lipid species
 double sample_tailorder(std::string species, double s_old) {
 
