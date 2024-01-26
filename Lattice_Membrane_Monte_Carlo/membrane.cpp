@@ -95,10 +95,76 @@ lipid& membrane::getlipid(int i, int j) {
 
 // modifier functions
 
-void membrane::swap(int* a, int* b) {
+void membrane::swap(std::vector<int> &a, std::vector<int> &b) {
 	lipid l = grid[a[0]][a[1]];
 	grid[a[0]][a[1]] = grid[b[0]][b[1]];
 	grid[b[0]][b[1]] = l;
+}
+
+
+void membrane::swap_DPPC_state(std::vector<int>& a) {
+	lipid l = grid[a[0]][a[1]];
+	int position[2] = { a[0], a[1] };
+	if (l.getspecies() == "DPPCd") {
+		lipid l1("DPPCo", 0.0, position);
+		grid[a[0]][a[1]] = l1;
+	}
+	else {
+		lipid l1("DPPCd", 0.0, position);
+		grid[a[0]][a[1]] = l1;
+	}
+}
+
+
+void membrane::patch_swap(std::vector<int>& bounds1, std::vector<int>& bounds2, int patch_size) {
+	
+	// iterate within patch bounds and swap lipid by lipid
+	for (int i = 0; i < patch_size; i++) {
+		int x1 = (bounds1[0] + i) % size;
+		int x2 = (bounds2[0] + i) % size;
+
+		for (int j = 0; j < patch_size; j++) {
+			int y1 = (bounds1[2] + j) % size;
+			int y2 = (bounds2[2] + j) % size;
+			printf("(%d %d) (%d %d)\n", x1, y1, x2, y2);
+			lipid l = grid[x1][y1];
+			grid[x1][y1] = grid[x2][y2];
+			grid[x2][y2] = l;
+		}
+	}
+
+	// For overlapping patches, incomplete: Needs resolution scheme for overlapping region(s)
+	/*// Create a deep copy of both patches
+	Grid patch1, patch2;
+
+	for (int i = 0; i < patch_size; i++) {
+		int x1 = (bounds1[0] + i) % size;
+		int x2 = (bounds2[0] + i) % size;
+		patch1.push_back(Array());
+		patch2.push_back(Array());
+		for (int j = 0; j < patch_size; j++) {
+			int y1 = (bounds1[2] + j) % size;
+			int y2 = (bounds2[2] + j) % size;
+
+			patch1[i].push_back(grid[x1][y1]);
+			patch2[i].push_back(grid[x2][y2]);
+		}
+	}
+	
+	// swap the patches using the copies
+	for (int i = 0; i < patch_size; i++) {
+		int x1 = (bounds1[0] + i) % size;
+		int x2 = (bounds2[0] + i) % size;
+		
+		for (int j = 0; j < patch_size; j++) {
+			int y1 = (bounds1[2] + j) % size;
+			int y2 = (bounds2[2] + j) % size;
+			
+			grid[x1][y1] = patch2[i][j];
+			grid[x2][y2] = patch1[i][j];
+		}
+	}*/
+
 }
 
 

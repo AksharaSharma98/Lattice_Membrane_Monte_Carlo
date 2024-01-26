@@ -24,7 +24,9 @@ public:
 	
 
 	// modifier functions
-	void swap(int* a, int* b);
+	void swap(std::vector<int> &a, std::vector<int> &b);
+	void swap_DPPC_state(std::vector<int>& a);
+	void patch_swap(std::vector<int>& bounds1, std::vector<int>& bounds2, int patch_size);
 	void tail_update(int* a, double s_new);
 
 protected:

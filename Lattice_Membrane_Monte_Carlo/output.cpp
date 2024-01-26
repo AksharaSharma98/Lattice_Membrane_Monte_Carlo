@@ -18,12 +18,12 @@ void write_config_int(FILE* config_file, membrane& upper, membrane& lower) {
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			lipid l = upper.getlipid(i, j);
-			fprintf(config_file, "%d ", forcefield.getoutput_type(l.getspecies()));
+			fprintf(config_file, "%d ", sys.get_output_type(l.getspecies()));
 		}
 		fprintf(config_file, " ");
 		for (int j = 0; j < n; j++) {
 			lipid l = lower.getlipid(i, j);
-			fprintf(config_file, "%d ", forcefield.getoutput_type(l.getspecies()));
+			fprintf(config_file, "%d ", sys.get_output_type(l.getspecies()));
 		}
 		fprintf(config_file, "\n");
 	}

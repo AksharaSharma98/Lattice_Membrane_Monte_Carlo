@@ -23,7 +23,7 @@ Parameters::Parameters() {
 		printf("(%s,%s) -> %lf\n",it->first.first.c_str(), it->first.second.c_str(), it->second);
 	}*/
 
-	plane_entropy_const = 0.06;
+	plane_entropy_const = 3.9; //0.06;
 
 	inter_entropy_const = 0.04;
 
@@ -34,10 +34,6 @@ Parameters::Parameters() {
 	tail_order_weights = { {"DPPC",{0.0,0.0,0.0,0.0,0.17,0.29,0.36,0.15,0.03,0.0}},
 						   {"DIPC",{0.0,0.0,0.07,0.25,0.41,0.20,0.07,0.0,0.0,0.0}},
 						   {"CHOL",{1.0}} };
-
-	output_type = { {"DPPC", 0},
-					{"CHOL", 1},
-				    {"DIPC", 2} };
 }
 
 // default destructor
@@ -71,10 +67,6 @@ std::vector<double> Parameters::tailorder_bins(std::string species) {
 
 std::vector<double> Parameters::tailorder_weights(std::string species) {
 	return tail_order_weights[species];
-}
-
-int Parameters::getoutput_type(std::string species) {
-	return output_type[species];
 }
 
 

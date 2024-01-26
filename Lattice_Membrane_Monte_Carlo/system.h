@@ -26,6 +26,8 @@ public:
 
 	std::vector<double> get_swap_weights();
 
+	int get_output_type(std::string species);
+
 protected:
 	int num_species;
 	int grid_size;
@@ -40,16 +42,21 @@ protected:
 	// Vector containing the different weights for the patch sizes
 	std::vector<double> swap_weights;
 
+	// contains integer-type config output values for keys of string-type species names
+	std::map<std::string, int> output_type;
 };
 
 // file input for species names and corresponding populations
-void read_system_parameters(std::vector<std::vector<std::string>>& species, std::vector<std::vector<int>>& population, std::vector<int>& swap_sizes, std::vector<double>& swap_weights, int& grid_size);
+void read_system_parameters(std::vector<std::vector<std::string>>& species, std::vector<std::vector<int>>& population, std::map<std::string, int>& output_type, std::vector<int>& swap_sizes, std::vector<double>& swap_weights, int& grid_size);
 
 // initializes the 2D lipid species vector with species names for each leaflet symmetrically
 void initialize_lipid_species(std::vector<std::vector<std::string>>& species, std::istringstream& line);
 
 // initializes the 2D lipid population vector with species populations for each leaflet symmetrically
 void initialize_lipid_populations(std::vector<std::vector<int>>& population, std::istringstream& line);
+
+// initializes the map containing species name and output integer pairs
+void initialize_output_type(std::vector<std::vector<std::string>>& species, std::map<std::string, int>& output_type, std::istringstream& line);
 
 // initializes the swap patch sizes vector
 void initialize_swap_sizes(std::vector<int>& swap_sizes, std::istringstream& line);

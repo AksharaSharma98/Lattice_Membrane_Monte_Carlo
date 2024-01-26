@@ -4,6 +4,14 @@
 #include "membrane.h"
 
 
+double system_energy_farago(membrane& current);
+
+double local_energy_farago(membrane& current, std::vector<int>& x);
+
+double pair_energy_farago(membrane& current, std::vector<int>& x);
+
+double entropy_farago(membrane& current, std::vector<int>& x);
+
 double system_energy(membrane& upper, membrane& lower);
 
 double local_enthalpy(membrane& current, membrane& opposing, int* x);

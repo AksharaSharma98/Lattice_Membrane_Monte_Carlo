@@ -16,6 +16,78 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+double system_energy_farago(membrane& current) {
+
+	int n = current.getgrid().size();
+	double energy = 0.0, local_energy = 0.0;
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			std::vector x = { i,j };
+			lipid lc = current.getlipid(x[0], x[1]);
+			if (lc.getspecies() == "DPPCd") { energy -= (forcefield.getplane_entropy_const() * kT); }
+			local_energy += local_energy_farago(current, x);
+		}
+	}
+
+	return energy + (0.5 * local_energy);
+	// *** Very Important ***
+	// verify if *0.5 is still correct after any Hamiltonian modificaitons
+}
+
+
+double local_energy_farago(membrane& current, std::vector<int>& x) {
+
+	double local_energy = 0.0;
+	
+	// get list of neighbours with PBC correction
+	int nbs[6][2] = { {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0} };
+	periodic_neighbours(current, x[0], x[1], nbs);
+	
+	lipid lc = current.getlipid(x[0], x[1]);
+	std::string c = lc.getspecies();
+
+	for (int k = 0; k < 6; k++) {
+		lipid l = current.getlipid(nbs[k][0], nbs[k][1]);
+		std::string cn = l.getspecies();
+		if (c == "DPPCo" || cn == "DPPCo") {
+			local_energy -= forcefield.getplane_pair_energy(std::make_pair(c, cn));
+		}
+	}
+	
+	return local_energy;
+}
+
+
+double pair_energy_farago(membrane& current, std::vector<int>& x) {
+	
+	double pair_energy = 0.0;
+
+	lipid l1 = current.getlipid(x[0], x[1]);
+	lipid l2 = current.getlipid(x[2], x[3]);
+	std::string s1 = l1.getspecies();
+	std::string s2 = l2.getspecies();
+
+	if (s1 == "DPPCo" || s2 == "DPPCo") {
+		pair_energy -= forcefield.getplane_pair_energy(std::make_pair(s1, s2));
+	}
+
+	return pair_energy;
+}
+
+
+double entropy_farago(membrane& current, std::vector<int>& x) {
+	lipid lc = current.getlipid(x[0], x[1]);
+	if (lc.getspecies() == "DPPCd") { 
+		return -(forcefield.getplane_entropy_const() * kT); 
+	}
+	else {
+		return 0.0;
+	}
+}
+
+
 double system_energy(membrane& upper, membrane& lower) {
 
 	int n = upper.getgrid().size();

@@ -21,8 +21,8 @@
 using namespace std;
 
 // global variables
-double e = 0.3;
-double kT = 2.048;
+double e = 1.0;
+double kT = 0.9;
 
 // initialize forcefield
 Parameters forcefield;
@@ -38,11 +38,12 @@ int main()
 
 	// system initialization
 	membrane upper(0);
-	membrane lower(1); printf("Completed system setup\n");
+	membrane lower(1); 
+	printf("Completed system setup\n");
 
 	// system evolution
 	printf("Starting MC evolution\n");
-	evolve_mc(upper, lower, 1, 1, 1, 1);
+	evolve_mc_farago(upper, lower, 10000000, 1000, 1000);
 
 	// testing (temporary)
 	

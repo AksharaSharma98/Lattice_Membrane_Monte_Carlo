@@ -26,8 +26,6 @@ public:
 	std::vector<double> tailorder_bins(std::string species);
 
 	std::vector<double> tailorder_weights(std::string species);
-
-	int getoutput_type(std::string species);
 	
 	// modifier functions
 
@@ -44,9 +42,7 @@ protected:
 	std::map<std::string, std::vector<double>> tail_order_bins;
 	// map that contains tail-order distribution weights for each species string key
 	std::map<std::string, std::vector<double>> tail_order_weights;
-
-	// contains integer-type config output values for keys of string-type species names
-	std::map<std::string, int> output_type;
+	
 };
 
 // file input for pair energy parameters
