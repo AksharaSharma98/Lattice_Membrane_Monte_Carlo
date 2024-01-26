@@ -39,9 +39,9 @@ protected:
 	double inter_entropy_const;
 
 	// map that contains tail-order distribution values for each species string key
-	std::map<std::string, std::vector<double>> tail_order_bins;
+	std::map<std::string, std::vector<double> > tail_order_bins;
 	// map that contains tail-order distribution weights for each species string key
-	std::map<std::string, std::vector<double>> tail_order_weights;
+	std::map<std::string, std::vector<double> > tail_order_weights;
 	
 };
 

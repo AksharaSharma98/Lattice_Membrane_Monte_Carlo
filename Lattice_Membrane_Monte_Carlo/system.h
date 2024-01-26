@@ -33,9 +33,9 @@ protected:
 	int grid_size;
 
 	// Vector of vectors containing the names of species in each leaflet
-	std::vector<std::vector<std::string>> species;
+	std::vector<std::vector<std::string> > species;
 	// Vector of vectors containing the corresponding population of each species in each leaflet
-	std::vector<std::vector<int>> population;
+	std::vector<std::vector<int> > population;
 
 	// Vector containing the different swap patch sizes to be used for MC swapping
 	std::vector<int> swap_sizes;
@@ -47,16 +47,16 @@ protected:
 };
 
 // file input for species names and corresponding populations
-void read_system_parameters(std::vector<std::vector<std::string>>& species, std::vector<std::vector<int>>& population, std::map<std::string, int>& output_type, std::vector<int>& swap_sizes, std::vector<double>& swap_weights, int& grid_size);
+void read_system_parameters(std::vector<std::vector<std::string> >& species, std::vector<std::vector<int> >& population, std::map<std::string, int>& output_type, std::vector<int>& swap_sizes, std::vector<double>& swap_weights, int& grid_size);
 
 // initializes the 2D lipid species vector with species names for each leaflet symmetrically
-void initialize_lipid_species(std::vector<std::vector<std::string>>& species, std::istringstream& line);
+void initialize_lipid_species(std::vector<std::vector<std::string> >& species, std::istringstream& line);
 
 // initializes the 2D lipid population vector with species populations for each leaflet symmetrically
-void initialize_lipid_populations(std::vector<std::vector<int>>& population, std::istringstream& line);
+void initialize_lipid_populations(std::vector<std::vector<int> >& population, std::istringstream& line);
 
 // initializes the map containing species name and output integer pairs
-void initialize_output_type(std::vector<std::vector<std::string>>& species, std::map<std::string, int>& output_type, std::istringstream& line);
+void initialize_output_type(std::vector<std::vector<std::string> >& species, std::map<std::string, int>& output_type, std::istringstream& line);
 
 // initializes the swap patch sizes vector
 void initialize_swap_sizes(std::vector<int>& swap_sizes, std::istringstream& line);

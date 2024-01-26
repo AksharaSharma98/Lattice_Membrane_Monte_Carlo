@@ -377,7 +377,7 @@ void unique_interaction_pairs(membrane& current, const std::vector<std::vector<i
 }
 
 
-void patch_boundaries(membrane& current, const std::vector<int> &a, int patch_size, std::vector<std::vector<int>>& boundary, std::vector<int>& bounds) {
+void patch_boundaries(membrane& current, const std::vector<int> &a, int patch_size, std::vector<std::vector<int> >& boundary, std::vector<int>& bounds) {
 	
 	int n = current.getgrid().size();
 	
