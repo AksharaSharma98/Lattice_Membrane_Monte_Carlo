@@ -30,29 +30,24 @@ void evolve_mc_farago(membrane& upper, membrane& lower, int steps, int energy_ou
 	
 	assert(steps >= 1 && "Invalid number of steps");
 	printf("Start of system evolution\nCompletion: ");
+
 	for (int t = 0; t < steps; t++) {
-		int sw = rand_int(0, 1);
+		//printf("Energy before moves = %lf\n",energy);
 		// pick non-degenerate lipids to exchange, attempt a chain of exchange moves
-		if (sw == 0) {
-			energy += multi_swap(upper, 100) / e;
-			energy += multi_swap(lower, 100) / e;
-		}
-		// pick non-degenerate DPPC lipids, attempt state swap moves
-		else if (sw == 1) {
-			energy += state_swap(upper, 10) / e;
-			energy += state_swap(lower, 10) / e;
-		}
+		energy += multi_swap(upper, 10) / e;
+		energy += multi_swap(lower, 10) / e;
+		
+		// pick non-degenerate DPPC lipids, attempt a chain of state swap moves
+		energy += state_swap(upper, 10) / e;
+		energy += state_swap(lower, 10) / e;
+		
 		// pick non-degenerate lipids to exchange, attempt a patch-swap move
-		//energy += patch_swap(upper) / e;
-		//energy += patch_swap(lower) / e;
+		energy += patch_swap(upper) / e;
+		energy += patch_swap(lower) / e;
 
 		// output configuration at specified frequency
 		if (t % energy_output_freq == 0) {
 			write_energy(energy_file, energy);
-			//printf("Step %d\n", t);
-			//printf("E = %lf\n", energy);
-			//double tot_e = (system_energy_farago(upper) + system_energy_farago(lower)) / e;
-			//printf("Actual system energy = %lf\n", tot_e);
 		}
 		if (t % config_output_freq == 0) {
 			write_config_int(config_file, upper, lower);

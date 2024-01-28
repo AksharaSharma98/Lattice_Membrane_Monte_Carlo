@@ -24,7 +24,7 @@ double system_energy_farago(membrane& current) {
 
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
-			std::vector x = { i,j };
+			std::vector<int> x = { i,j };
 			lipid lc = current.getlipid(x[0], x[1]);
 			if (lc.getspecies() == "DPPCd") { energy -= (forcefield.getplane_entropy_const() * kT); }
 			local_energy += local_energy_farago(current, x);

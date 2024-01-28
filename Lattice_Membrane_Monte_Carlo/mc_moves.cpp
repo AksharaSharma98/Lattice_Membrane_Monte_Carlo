@@ -49,7 +49,7 @@ double multi_swap(membrane& current, int batch_size) {
 
 	// pick and store a sequence of pairs of non-degenerate lipids to exchange
 	std::vector<int> a{ 0, 0 }, b{ 0, 0 };
-	std::vector<std::vector<int>> sites1, sites2;
+	std::vector<std::vector<int> > sites1, sites2;
 
 	for (int i = 0; i < batch_size; i++) {
 		lipid_picker_species(current, sites1, sites2);
@@ -100,15 +100,14 @@ double state_swap(membrane& current, int batch_size) {
 
 	// pick and store a sequence of pairs of non-degenerate lipids to exchange
 	std::vector<int> a{ 0, 0 };
-	std::vector<std::vector<int>> sites;
+	std::vector<std::vector<int> > sites;
 	
 	for (int i = 0; i < batch_size; i++) {
 		lipid_picker_DPPC(current, sites);
-		sites.push_back(a);
 	}
 
 	// find and store unique interaction pairs involved in the swap chain
-	std::map<std::set<int>, std::vector<int>> s;
+	std::map<std::set<int>, std::vector<int> > s;
 	unique_interaction_pairs(current, sites, s);
 
 	// calculate initial energy by looping over unique sites
@@ -157,41 +156,32 @@ double patch_swap(membrane& current) {
 
 	// sample a patch size from input distribution
 	int size = sample_swap_size();
-
+	assert(size > 1 && "Invalid patch size used. Patches must be larger than 1 lipid\n");
+	
 	// pick two valid patch centers
 	std::vector<int> a{ 0, 0 }, b{ 0, 0 };
 	patch_center_picker(current, a, b, size);
 	
 	// find and store patch boundaries
-	std::vector<std::vector<int>> boundary1, boundary2;
+	std::vector<std::vector<int> > boundary1, boundary2;
 	std::vector<int> bounds1, bounds2; // contains {x1, x2, y1, y2} bounds of the respective patches
 	patch_boundaries(current, a, size, boundary1, bounds1);
 	patch_boundaries(current, b, size, boundary2, bounds2);
-	
+
 	// find and store unique interaction pairs involved in the swap chain
-	std::map<std::set<int>, std::vector<int>> s;
+	std::map<std::set<int>, std::vector<int> > s;
 	unique_interaction_pairs(current, boundary1, boundary2, s);
 
 	// calculate initial energy along patch boundaries
 	double Ei = 0.0;
-	//printf("\nPair-map:\n");
 	for (const auto& [key, value] : s) {
-		/*printf("{");
-		for (auto i : key) {
-			printf("%d ", i);
-		}
-		printf("} : {");
-		for (int i = 0; i < 4; i++) {
-			printf("%d ", value[i]);
-		}
-		printf("}\n");*/
 		std::vector<int> pair_coords = value;
 		Ei += pair_energy_farago(current, pair_coords);
 	}
 	
 	// swap patches
 	current.patch_swap(bounds1, bounds2, size);
-	
+
 	// calculate final energy, energy difference
 	double Ef = 0.0;
 	for (const auto& [key, value] : s) {
@@ -199,7 +189,7 @@ double patch_swap(membrane& current) {
 		Ef += pair_energy_farago(current, pair_coords);
 	}
 	double delE = Ef - Ei;
-	printf("delE = %lf\n", delE);
+	
 	// accept/reject attempted move
 	bool accept = metropolis_accept(delE);
 
@@ -242,7 +232,7 @@ void lipid_picker(membrane& leaflet, std::vector<int>& c1, std::vector<int>& c2)
 
 // pick two non-degenerate grid points to swap.
 // use when all lipids of the same species are identical
-void lipid_picker_species(membrane& leaflet, std::vector<std::vector<int>> &sites1, std::vector<std::vector<int>> &sites2) {
+void lipid_picker_species(membrane& leaflet, std::vector<std::vector<int> > &sites1, std::vector<std::vector<int> > &sites2) {
 
 	int n = leaflet.getgrid().size();
 
@@ -284,7 +274,7 @@ void lipid_picker_species(membrane& leaflet, std::vector<std::vector<int>> &site
 }
 
 
-void lipid_picker_DPPC(membrane& leaflet, std::vector<std::vector<int>>& sites) {
+void lipid_picker_DPPC(membrane& leaflet, std::vector<std::vector<int> >& sites) {
 
 	int n = leaflet.getgrid().size();
 
@@ -296,8 +286,8 @@ void lipid_picker_DPPC(membrane& leaflet, std::vector<std::vector<int>>& sites) 
 		for (int i = 0; i < 2; i++) {
 			c[i] = rand_int(0, n - 1);
 		}
-		std::string l = leaflet.getlipid(c[0], c[1]).getspecies();
 
+		std::string l = leaflet.getlipid(c[0], c[1]).getspecies();
 		if (l == "DPPCd" || l == "DPPCo") {
 			picker = true;
 		}
@@ -329,14 +319,14 @@ bool metropolis_accept(double delE) {
 }
 
 
-void unique_interaction_pairs(membrane& current, const std::vector<std::vector<int>> &sites1, const std::vector<std::vector<int>> &sites2, std::map<std::set<int>, std::vector<int>> &unique) {
+void unique_interaction_pairs(membrane& current, const std::vector<std::vector<int> > &sites1, const std::vector<std::vector<int> > &sites2, std::map<std::set<int>, std::vector<int> > &unique) {
 
 	int x, y;
 	int n = current.getgrid().size();
 	int nbs[6][2] = { {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0} };
 
 	// append sites into one list
-	std::vector<std::vector<int>> sites = sites1;
+	std::vector<std::vector<int> > sites = sites1;
 	sites.insert(sites.end(), sites2.begin(), sites2.end());
 
 	for (int i = 0; i < sites.size(); i++) {
@@ -348,14 +338,14 @@ void unique_interaction_pairs(membrane& current, const std::vector<std::vector<i
 
 		for (int j = 0; j < 6; j++) {
 			y = n * nbs[j][0] + nbs[j][1];
-			std::set key = {x, y};
+			std::set<int> key = {x, y};
 			unique.insert({ key , {sites[i][0], sites[i][1], nbs[j][0], nbs[j][1]} });
 		}
 	}
 }
 
 
-void unique_interaction_pairs(membrane& current, const std::vector<std::vector<int>>& sites, std::map<std::set<int>, std::vector<int>>& unique) {
+void unique_interaction_pairs(membrane& current, const std::vector<std::vector<int> >& sites, std::map<std::set<int>, std::vector<int> >& unique) {
 
 	int x, y;
 	int n = current.getgrid().size();
@@ -370,7 +360,7 @@ void unique_interaction_pairs(membrane& current, const std::vector<std::vector<i
 
 		for (int j = 0; j < 6; j++) {
 			y = n * nbs[j][0] + nbs[j][1];
-			std::set key = { x, y };
+			std::set<int> key = { x, y };
 			unique.insert({ key , {sites[i][0], sites[i][1], nbs[j][0], nbs[j][1]} });
 		}
 	}

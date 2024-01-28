@@ -34,7 +34,6 @@ System::System() {
 		std::cout << swap_weights[i] << " ";
 	}
 	printf("\n");*/
-
 }
 
 System::~System() {

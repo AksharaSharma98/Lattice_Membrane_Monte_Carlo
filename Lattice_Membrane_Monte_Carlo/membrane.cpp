@@ -14,6 +14,7 @@ membrane::membrane (int leaflet)
 {
 	size = sys.get_grid_size();
 	int num_species = sys.get_num_species();
+	
 	assert(size%2 == 0 && "Grid size must be even");
 	assert(size >= 1 && "Invalid grid size");
 
@@ -105,6 +106,7 @@ void membrane::swap(std::vector<int> &a, std::vector<int> &b) {
 void membrane::swap_DPPC_state(std::vector<int>& a) {
 	lipid l = grid[a[0]][a[1]];
 	int position[2] = { a[0], a[1] };
+	
 	if (l.getspecies() == "DPPCd") {
 		lipid l1("DPPCo", 0.0, position);
 		grid[a[0]][a[1]] = l1;
@@ -126,7 +128,7 @@ void membrane::patch_swap(std::vector<int>& bounds1, std::vector<int>& bounds2, 
 		for (int j = 0; j < patch_size; j++) {
 			int y1 = (bounds1[2] + j) % size;
 			int y2 = (bounds2[2] + j) % size;
-			printf("(%d %d) (%d %d)\n", x1, y1, x2, y2);
+			
 			lipid l = grid[x1][y1];
 			grid[x1][y1] = grid[x2][y2];
 			grid[x2][y2] = l;

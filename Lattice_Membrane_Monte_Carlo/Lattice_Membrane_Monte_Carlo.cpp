@@ -43,7 +43,7 @@ int main()
 
 	// system evolution
 	printf("Starting MC evolution\n");
-	evolve_mc_farago(upper, lower, 10000000, 1000, 1000);
+	evolve_mc_farago(upper, lower, 10000, 100, 100);
 
 	// testing (temporary)
 	
