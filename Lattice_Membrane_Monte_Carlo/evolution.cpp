@@ -32,18 +32,18 @@ void evolve_mc_farago(membrane& upper, membrane& lower, int steps, int energy_ou
 	printf("Start of system evolution\nCompletion: ");
 
 	for (int t = 0; t < steps; t++) {
-		//printf("Energy before moves = %lf\n",energy);
+		printf("Energy before moves = %lf\n",energy);
 		// pick non-degenerate lipids to exchange, attempt a chain of exchange moves
 		energy += multi_swap(upper, 10) / e;
 		energy += multi_swap(lower, 10) / e;
 		
 		// pick non-degenerate DPPC lipids, attempt a chain of state swap moves
-		energy += state_swap(upper, 10) / e;
-		energy += state_swap(lower, 10) / e;
+		//energy += state_swap(upper, 10) / e;
+		//energy += state_swap(lower, 10) / e;
 		
 		// pick non-degenerate lipids to exchange, attempt a patch-swap move
-		energy += patch_swap(upper) / e;
-		energy += patch_swap(lower) / e;
+		//energy += patch_swap(upper) / e;
+		//energy += patch_swap(lower) / e;
 
 		// output configuration at specified frequency
 		if (t % energy_output_freq == 0) {

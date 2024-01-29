@@ -61,9 +61,8 @@ double multi_swap(membrane& current, int batch_size) {
 	
 	// calculate initial energy by looping over unique sites
 	double Ei = 0.0;
-	for (const auto& [key, value] : s) {
-		std::vector<int> pair_coords = value;
-		Ei += pair_energy_farago(current, pair_coords);
+	for (std::map<std::set<int>, std::vector<int>>::iterator it = s.begin(); it != s.end(); it++){
+		Ei += pair_energy_farago(current, it->second);
 	}
 	
 	// loop over stored swap sites and execute swaps
@@ -73,9 +72,8 @@ double multi_swap(membrane& current, int batch_size) {
 	
 	// calculate final energy by looping over unique sites, energy difference
 	double Ef = 0.0;
-	for (const auto& [key, value] : s) {
-		std::vector<int> pair_coords = value;
-		Ef += pair_energy_farago(current, pair_coords);
+	for (std::map<std::set<int>, std::vector<int>>::iterator it = s.begin(); it != s.end(); it++) {
+		Ef += pair_energy_farago(current, it->second);
 	}
 	double delE = Ef - Ei;
 	
@@ -112,9 +110,8 @@ double state_swap(membrane& current, int batch_size) {
 
 	// calculate initial energy by looping over unique sites
 	double Ei = 0.0;
-	for (const auto& [key, value] : s) {
-		std::vector<int> pair_coords = value;
-		Ei += pair_energy_farago(current, pair_coords);
+	for (std::map<std::set<int>, std::vector<int>>::iterator it = s.begin(); it != s.end(); it++) {
+		Ei += pair_energy_farago(current, it->second);
 	}
 	for (int i = 0; i < batch_size; i++) {
 		Ei += entropy_farago(current, sites[i]);
@@ -126,9 +123,8 @@ double state_swap(membrane& current, int batch_size) {
 
 	// calculate final energy by looping over unique sites, energy difference
 	double Ef = 0.0;
-	for (const auto& [key, value] : s) {
-		std::vector<int> pair_coords = value;
-		Ef += pair_energy_farago(current, pair_coords);
+	for (std::map<std::set<int>, std::vector<int>>::iterator it = s.begin(); it != s.end(); it++) {
+		Ef += pair_energy_farago(current, it->second);
 	}
 	for (int i = 0; i < batch_size; i++) {
 		Ef += entropy_farago(current, sites[i]);
@@ -174,9 +170,8 @@ double patch_swap(membrane& current) {
 
 	// calculate initial energy along patch boundaries
 	double Ei = 0.0;
-	for (const auto& [key, value] : s) {
-		std::vector<int> pair_coords = value;
-		Ei += pair_energy_farago(current, pair_coords);
+	for (std::map<std::set<int>, std::vector<int>>::iterator it = s.begin(); it != s.end(); it++) {
+		Ei += pair_energy_farago(current, it->second);
 	}
 	
 	// swap patches
@@ -184,9 +179,8 @@ double patch_swap(membrane& current) {
 
 	// calculate final energy, energy difference
 	double Ef = 0.0;
-	for (const auto& [key, value] : s) {
-		std::vector<int> pair_coords = value;
-		Ef += pair_energy_farago(current, pair_coords);
+	for (std::map<std::set<int>, std::vector<int>>::iterator it = s.begin(); it != s.end(); it++) {
+		Ef += pair_energy_farago(current, it->second);
 	}
 	double delE = Ef - Ei;
 	
