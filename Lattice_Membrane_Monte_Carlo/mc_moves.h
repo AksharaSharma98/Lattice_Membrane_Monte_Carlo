@@ -6,11 +6,11 @@
 
 double single_swap(membrane& current);
 
-double multi_swap(membrane& current, int batch_size);
+double multi_swap(membrane& current, int batch_size, std::vector<double>& acceptance);
 
-double state_swap(membrane& current, int batch_size);
+double state_swap(membrane& current, int batch_size, std::vector<double>& acceptance);
 
-double patch_swap(membrane& current);
+double patch_swap(membrane& current, std::map<int, std::vector<double> >& patch_accept);
 
 void lipid_picker(membrane& leaflet, std::vector<int>& c1, std::vector<int>& c2);
 
@@ -20,7 +20,7 @@ void lipid_picker_DPPC(membrane& leaflet, std::vector<std::vector<int> >& sites)
 
 bool metropolis_accept(double delE);
 
-void unique_interaction_pairs(membrane& current, const std::vector<std::vector<int> >& sites1, const std::vector<std::vector<int> >& sites2, std::map<std::set<int>, std::vector<int>> &unique);
+void unique_interaction_pairs(membrane& current, const std::vector<std::vector<int> >& sites1, const std::vector<std::vector<int> >& sites2, std::map<std::set<int>, std::vector<int> > &unique);
 
 void unique_interaction_pairs(membrane& current, const std::vector<std::vector<int> >& sites, std::map<std::set<int>, std::vector<int> >& unique);
 

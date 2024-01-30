@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <math.h>
 #include <string>
 #include <assert.h>
@@ -28,36 +29,61 @@ void evolve_mc_farago(membrane& upper, membrane& lower, int steps, int energy_ou
 	double energy = (system_energy_farago(upper) + system_energy_farago(lower)) / e; 
 	printf("System energy = %lf\n", energy);
 	
-	assert(steps >= 1 && "Invalid number of steps");
-	printf("Start of system evolution\nCompletion: ");
+	// make system checks and validate input
+	assert(steps >= 1 && "Invalid number of steps\n");
+	assert(!sys.get_swap_sizes().empty() && "Swap size distribution not initialized\n");
+	printf("Start of system evolution\n");
+	//printf("Start of system evolution\nCompletion: ");
 
+	// Initialize acceptance ratio trackers
+	std::vector<int> patch_sizes = { sys.get_swap_sizes()[0], sys.get_swap_sizes().back()};
+	std::map<int, std::vector<double> > patch_swap_accept;
+	for (int i = patch_sizes[0]; i <= patch_sizes[1]; i++) {
+		patch_swap_accept.insert({ i, {0.0, 0.0} });
+	}
+	std::vector<double> multi_swap_accept = { 0.0, 0.0 }, state_swap_accept = { 0.0, 0.0 };
+	
 	for (int t = 0; t < steps; t++) {
-		//printf("Energy before moves = %lf\n",energy);
+		
 		// pick non-degenerate lipids to exchange, attempt a chain of exchange moves
-		energy += multi_swap(upper, 10) / e;
-		energy += multi_swap(lower, 10) / e;
+		energy += multi_swap(upper, 100, multi_swap_accept) / e;
+		energy += multi_swap(lower, 100, multi_swap_accept) / e;
 		
 		// pick non-degenerate DPPC lipids, attempt a chain of state swap moves
-		energy += state_swap(upper, 10) / e;
-		energy += state_swap(lower, 10) / e;
+		energy += state_swap(upper, 100, state_swap_accept) / e;
+		energy += state_swap(lower, 100, state_swap_accept) / e;
 		
 		// pick non-degenerate lipids to exchange, attempt a patch-swap move
-		energy += patch_swap(upper) / e;
-		energy += patch_swap(lower) / e;
+		energy += patch_swap(upper, patch_swap_accept) / e;
+		energy += patch_swap(lower, patch_swap_accept) / e;
 
 		// output configuration at specified frequency
 		if (t % energy_output_freq == 0) {
 			write_energy(energy_file, energy);
+			//printf("Energy = %lf\n", energy);
+			//printf("Actual energy = %lf\n", (system_energy_farago(upper) + system_energy_farago(lower)) / e);
+
+			// log acceptance ratios
+			if (t != 0) {
+				printf("\nAcceptance ratios log at step %d:\n", t);
+				printf("Multi-swap : %lf\n", (multi_swap_accept[0] / multi_swap_accept[1]));
+				printf("State-swap : %lf\n", (state_swap_accept[0] / state_swap_accept[1]));
+				printf("Patch-swap sizes:\n");
+				for (std::map<int, std::vector<double> >::iterator it = patch_swap_accept.begin(); it != patch_swap_accept.end(); it++) {
+					printf("%d : %lf\n", it->first, (it->second[0] / it->second[1]));
+				}
+			}
 		}
 		if (t % config_output_freq == 0) {
 			write_config_int(config_file, upper, lower);
 			//write_tailconfig(tailconfig_file, upper, lower);
 		}
-		if (t % (steps / 10) == 0) {
+		/*if (t % (steps / 10) == 0) {
 			printf("%d%% ", t / (steps / 100));
-		}
+		}*/
 	}
-	printf("100%%\nSimulation complete\n");
+	printf("\nSimulation Complete!\n");
+	//printf("100%%\nSimulation complete\n");
 
 	// clean-up
 	fclose(config_file);

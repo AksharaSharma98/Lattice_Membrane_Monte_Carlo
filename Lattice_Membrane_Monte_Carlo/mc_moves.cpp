@@ -45,7 +45,7 @@ double single_swap(membrane& current) {
 }
 
 
-double multi_swap(membrane& current, int batch_size) {
+double multi_swap(membrane& current, int batch_size, std::vector<double>& acceptance) {
 
 	// pick and store a sequence of pairs of non-degenerate lipids to exchange
 	std::vector<int> a{ 0, 0 }, b{ 0, 0 };
@@ -61,7 +61,7 @@ double multi_swap(membrane& current, int batch_size) {
 	
 	// calculate initial energy by looping over unique sites
 	double Ei = 0.0;
-	for (std::map<std::set<int>, std::vector<int>>::iterator it = s.begin(); it != s.end(); it++){
+	for (std::map<std::set<int>, std::vector<int> >::iterator it = s.begin(); it != s.end(); it++){
 		Ei += pair_energy_farago(current, it->second);
 	}
 	
@@ -72,7 +72,7 @@ double multi_swap(membrane& current, int batch_size) {
 	
 	// calculate final energy by looping over unique sites, energy difference
 	double Ef = 0.0;
-	for (std::map<std::set<int>, std::vector<int>>::iterator it = s.begin(); it != s.end(); it++) {
+	for (std::map<std::set<int>, std::vector<int> >::iterator it = s.begin(); it != s.end(); it++) {
 		Ef += pair_energy_farago(current, it->second);
 	}
 	double delE = Ef - Ei;
@@ -86,15 +86,21 @@ double multi_swap(membrane& current, int batch_size) {
 		for (int i = batch_size-1; i >= 0; i--) {
 			current.swap(sites1[i], sites2[i]);
 		}
+		// log acceptance ratio
+		acceptance[1] += 1.0;
+
 		return 0.0;
 	}
 	else {
+		// log acceptance ratio
+		acceptance[0] += 1.0; acceptance[1] += 1.0;
+
 		return delE;
 	}
 }
 
 
-double state_swap(membrane& current, int batch_size) {
+double state_swap(membrane& current, int batch_size, std::vector<double>& acceptance) {
 
 	// pick and store a sequence of pairs of non-degenerate lipids to exchange
 	std::vector<int> a{ 0, 0 };
@@ -110,7 +116,7 @@ double state_swap(membrane& current, int batch_size) {
 
 	// calculate initial energy by looping over unique sites
 	double Ei = 0.0;
-	for (std::map<std::set<int>, std::vector<int>>::iterator it = s.begin(); it != s.end(); it++) {
+	for (std::map<std::set<int>, std::vector<int> >::iterator it = s.begin(); it != s.end(); it++) {
 		Ei += pair_energy_farago(current, it->second);
 	}
 	for (int i = 0; i < batch_size; i++) {
@@ -123,7 +129,7 @@ double state_swap(membrane& current, int batch_size) {
 
 	// calculate final energy by looping over unique sites, energy difference
 	double Ef = 0.0;
-	for (std::map<std::set<int>, std::vector<int>>::iterator it = s.begin(); it != s.end(); it++) {
+	for (std::map<std::set<int>, std::vector<int> >::iterator it = s.begin(); it != s.end(); it++) {
 		Ef += pair_energy_farago(current, it->second);
 	}
 	for (int i = 0; i < batch_size; i++) {
@@ -140,15 +146,21 @@ double state_swap(membrane& current, int batch_size) {
 		for (int i = batch_size - 1; i >= 0; i--) {
 			current.swap_DPPC_state(sites[i]);
 		}
+		// log acceptance ratio
+		acceptance[1] += 1.0;
+
 		return 0.0;
 	}
 	else {
+		// log acceptance ratio
+		acceptance[0] += 1.0; acceptance[1] += 1.0;
+		
 		return delE;
 	}
 }
 
 
-double patch_swap(membrane& current) {
+double patch_swap(membrane& current, std::map<int, std::vector<double> >& patch_accept) {
 
 	// sample a patch size from input distribution
 	int size = sample_swap_size();
@@ -170,7 +182,7 @@ double patch_swap(membrane& current) {
 
 	// calculate initial energy along patch boundaries
 	double Ei = 0.0;
-	for (std::map<std::set<int>, std::vector<int>>::iterator it = s.begin(); it != s.end(); it++) {
+	for (std::map<std::set<int>, std::vector<int> >::iterator it = s.begin(); it != s.end(); it++) {
 		Ei += pair_energy_farago(current, it->second);
 	}
 	
@@ -179,7 +191,7 @@ double patch_swap(membrane& current) {
 
 	// calculate final energy, energy difference
 	double Ef = 0.0;
-	for (std::map<std::set<int>, std::vector<int>>::iterator it = s.begin(); it != s.end(); it++) {
+	for (std::map<std::set<int>, std::vector<int> >::iterator it = s.begin(); it != s.end(); it++) {
 		Ef += pair_energy_farago(current, it->second);
 	}
 	double delE = Ef - Ei;
@@ -190,9 +202,15 @@ double patch_swap(membrane& current) {
 	// return system to initial state if move is rejected
 	if (accept == false) {
 		current.patch_swap(bounds1, bounds2, size);
+		// log acceptance ratio
+		patch_accept[size][1] += 1.0;
+
 		return 0.0;
 	}
 	else {
+		// log acceptance ratio
+		patch_accept[size][0] += 1.0; patch_accept[size][1] += 1.0;
+
 		return delE;
 	}
 }
@@ -202,7 +220,7 @@ double patch_swap(membrane& current) {
 // use when lipids of the same species are different
 void lipid_picker(membrane& leaflet, std::vector<int>& c1, std::vector<int>& c2) {
 
-	int n = leaflet.getgrid().size();
+	int n = sys.get_grid_size();
 
 	bool picker = false;
 
@@ -228,7 +246,7 @@ void lipid_picker(membrane& leaflet, std::vector<int>& c1, std::vector<int>& c2)
 // use when all lipids of the same species are identical
 void lipid_picker_species(membrane& leaflet, std::vector<std::vector<int> > &sites1, std::vector<std::vector<int> > &sites2) {
 
-	int n = leaflet.getgrid().size();
+	int n = sys.get_grid_size();
 
 	bool picker = false;
 	std::vector<int> c1 = { 0,0 };
@@ -270,7 +288,7 @@ void lipid_picker_species(membrane& leaflet, std::vector<std::vector<int> > &sit
 
 void lipid_picker_DPPC(membrane& leaflet, std::vector<std::vector<int> >& sites) {
 
-	int n = leaflet.getgrid().size();
+	int n = sys.get_grid_size();
 
 	bool picker = false;
 	std::vector<int> c = { 0,0 };
@@ -316,7 +334,7 @@ bool metropolis_accept(double delE) {
 void unique_interaction_pairs(membrane& current, const std::vector<std::vector<int> > &sites1, const std::vector<std::vector<int> > &sites2, std::map<std::set<int>, std::vector<int> > &unique) {
 
 	int x, y;
-	int n = current.getgrid().size();
+	int n = sys.get_grid_size();
 	int nbs[6][2] = { {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0} };
 
 	// append sites into one list
@@ -342,7 +360,7 @@ void unique_interaction_pairs(membrane& current, const std::vector<std::vector<i
 void unique_interaction_pairs(membrane& current, const std::vector<std::vector<int> >& sites, std::map<std::set<int>, std::vector<int> >& unique) {
 
 	int x, y;
-	int n = current.getgrid().size();
+	int n = sys.get_grid_size();
 	int nbs[6][2] = { {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0} };
 
 	for (int i = 0; i < sites.size(); i++) {
@@ -363,7 +381,7 @@ void unique_interaction_pairs(membrane& current, const std::vector<std::vector<i
 
 void patch_boundaries(membrane& current, const std::vector<int> &a, int patch_size, std::vector<std::vector<int> >& boundary, std::vector<int>& bounds) {
 	
-	int n = current.getgrid().size();
+	int n = sys.get_grid_size();
 	
 	int shift = patch_size / 2;
 	//printf("shift = %d\n", shift);
@@ -400,7 +418,7 @@ void patch_boundaries(membrane& current, const std::vector<int> &a, int patch_si
 
 void patch_center_picker(membrane& leaflet, std::vector<int>& c1, std::vector<int>& c2, int patch_size) {
 
-	int n = leaflet.getgrid().size();
+	int n = sys.get_grid_size();
 
 	// pick first point
 	for (int i = 0; i < 2; i++) {

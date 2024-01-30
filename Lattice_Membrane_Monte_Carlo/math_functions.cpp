@@ -10,7 +10,7 @@
 #include "Lattice_Membrane_Monte_Carlo.h"
 
 // set RNG seed
-std::mt19937 mt(1810);     //1790
+std::mt19937 mt(1790);
 std::uniform_real_distribution<double> uniform(0.0, 1.0);
 
 
@@ -38,7 +38,7 @@ int sample_swap_size() {
 	std::vector<int> sizes = sys.get_swap_sizes();
 	std::vector<double> weights = sys.get_swap_weights();
 
-	std::piecewise_constant_distribution<> dist(sizes.begin(), sizes.end(), weights.begin());
+	std::piecewise_constant_distribution<double> dist(sizes.begin(), sizes.end(), weights.begin());
 
 	return dist(mt);
 }
@@ -51,7 +51,7 @@ double sample_tailorder(std::string species, double s_old) {
 	std::vector<double> bins = forcefield.tailorder_bins(species);
 	std::vector<double> weights = forcefield.tailorder_weights(species);
 
-	std::piecewise_constant_distribution<> dist(bins.begin(), bins.end(), weights.begin());
+	std::piecewise_constant_distribution<double> dist(bins.begin(), bins.end(), weights.begin());
 	bool picker = false;
 	while (picker == false) {
 		s = dist(mt);

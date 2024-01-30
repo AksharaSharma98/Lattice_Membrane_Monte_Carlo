@@ -20,7 +20,7 @@ membrane::membrane (int leaflet)
 
 	// initialize grid of lipids
 
-	std::vector<std::vector<int>> matrix(size, std::vector<int>(size, -1));
+	std::vector<std::vector<int> > matrix(size, std::vector<int>(size, -1));
 	std::vector<int> count;
 	for (int i = 0; i < num_species; i++) {
 		count.push_back(0);
