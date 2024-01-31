@@ -42,7 +42,7 @@ int main()
 	printf("Completed system setup\n");
 
 	// system evolution
-	evolve_mc_farago(upper, lower, 5000000, 1000, 1000);
+	evolve_mc_farago(upper, lower, 30000000, 3000, 3000);
 
 	// testing (temporary)
 	

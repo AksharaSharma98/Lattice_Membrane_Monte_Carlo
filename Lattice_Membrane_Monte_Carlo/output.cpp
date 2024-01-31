@@ -29,6 +29,7 @@ void write_config_int(FILE* config_file, membrane& upper, membrane& lower) {
 	}
 }
 
+
 void write_tailconfig(FILE* tailconfig_file, membrane& upper, membrane& lower) {
 
 	int n = upper.getgrid().size();
@@ -44,6 +45,7 @@ void write_tailconfig(FILE* tailconfig_file, membrane& upper, membrane& lower) {
 		fprintf(tailconfig_file, "\n");
 	}
 }
+
 
 void write_config_species(FILE* config_file, membrane& upper, membrane& lower) {
 
@@ -63,11 +65,23 @@ void write_config_species(FILE* config_file, membrane& upper, membrane& lower) {
 	}
 }
 
+
 void write_energy(FILE* energy_file, double energy) {
 
 	fprintf(energy_file, "%lf\n", energy);
 
 }
+
+
+void write_header(FILE* energy_file) {
+	// this is very crude and needs proper rewriting
+	fprintf(energy_file, "# ");
+	fprintf(energy_file, "%lf ", forcefield.getplane_pair_energy(std::make_pair("DPPCo", "DPPCo")));
+	fprintf(energy_file, "%lf ", forcefield.getplane_pair_energy(std::make_pair("DPPCo", "CHOL")));
+	fprintf(energy_file, "%lf ", forcefield.getplane_pair_energy(std::make_pair("DPPCo", "DOPC")));
+	fprintf(energy_file, "\n");
+}
+
 
 void print_leaflet_species(membrane& leaflet) {
 

@@ -24,7 +24,7 @@ void evolve_mc_farago(membrane& upper, membrane& lower, int steps, int energy_ou
 	config_file = fopen("config.txt", "w+");
 	//tailconfig_file = fopen("tailconfig.txt", "w+");
 	energy_file = fopen("energy.txt", "w+");
-	//fprintf(config_file, "header");                         // insert function to write header
+	write_header(energy_file);
 	
 	double energy = (system_energy_farago(upper) + system_energy_farago(lower)) / e; 
 	printf("System energy = %lf\n", energy);
@@ -44,18 +44,25 @@ void evolve_mc_farago(membrane& upper, membrane& lower, int steps, int energy_ou
 	std::vector<double> multi_swap_accept = { 0.0, 0.0 }, state_swap_accept = { 0.0, 0.0 };
 	
 	for (int t = 0; t < steps; t++) {
+
+		// random sampler to pick move type
+		int move = rand_int(0, 2);
 		
-		// pick non-degenerate lipids to exchange, attempt a chain of exchange moves
-		energy += multi_swap(upper, 100, multi_swap_accept) / e;
-		energy += multi_swap(lower, 100, multi_swap_accept) / e;
-		
-		// pick non-degenerate DPPC lipids, attempt a chain of state swap moves
-		energy += state_swap(upper, 100, state_swap_accept) / e;
-		energy += state_swap(lower, 100, state_swap_accept) / e;
-		
-		// pick non-degenerate lipids to exchange, attempt a patch-swap move
-		energy += patch_swap(upper, patch_swap_accept) / e;
-		energy += patch_swap(lower, patch_swap_accept) / e;
+		if (move == 0) {
+			// pick non-degenerate lipids to exchange, attempt a chain of exchange moves
+			energy += multi_swap(upper, 20, multi_swap_accept) / e;
+			energy += multi_swap(lower, 20, multi_swap_accept) / e;
+		}
+		else if (move == 1) {
+			// pick non-degenerate DPPC lipids, attempt a chain of state swap moves
+			energy += state_swap(upper, 20, state_swap_accept) / e;
+			energy += state_swap(lower, 20, state_swap_accept) / e;
+		}
+		else if (move == 2) {
+			// pick non-degenerate lipids to exchange, attempt a patch-swap move
+			energy += patch_swap(upper, patch_swap_accept) / e;
+			energy += patch_swap(lower, patch_swap_accept) / e;
+		}
 
 		// output configuration at specified frequency
 		if (t % energy_output_freq == 0) {

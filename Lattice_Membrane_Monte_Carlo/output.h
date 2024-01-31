@@ -10,6 +10,8 @@ void write_config_species(FILE* config_file, membrane& upper, membrane& lower);
 
 void write_energy(FILE* energy_file, double energy);
 
+void write_header(FILE* energy_file);
+
 void print_leaflet_species(membrane& leaflet);
 
 #endif

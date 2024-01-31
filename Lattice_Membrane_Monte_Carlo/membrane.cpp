@@ -13,6 +13,7 @@
 membrane::membrane (int leaflet)
 {
 	size = sys.get_grid_size();
+	
 	int num_species = sys.get_num_species();
 	
 	assert(size%2 == 0 && "Grid size must be even");
