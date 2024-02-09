@@ -24,7 +24,7 @@ void unique_interaction_pairs(membrane& current, const std::vector<std::vector<i
 
 void unique_interaction_pairs(membrane& current, const std::vector<std::vector<int> >& sites, std::map<std::set<int>, std::vector<int> >& unique);
 
-void patch_boundaries(membrane& current, const std::vector<int>& a, int patch_size, std::vector<std::vector<int> > &boundary, std::vector<int> &bounds);
+void patch_sites(membrane& current, const std::vector<int>& a, int patch_size, std::vector<std::vector<int> > &patch, std::vector<int> &bounds);
 
 void patch_center_picker(membrane& leaflet, std::vector<int>& c1, std::vector<int>& c2, int patch_size);
 

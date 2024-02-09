@@ -171,21 +171,21 @@ double patch_swap(membrane& current, std::map<int, std::vector<double> >& patch_
 	patch_center_picker(current, a, b, size);
 	
 	// find and store patch boundaries
-	std::vector<std::vector<int> > boundary1, boundary2;
+	std::vector<std::vector<int> > patch1, patch2;
 	std::vector<int> bounds1, bounds2; // contains {x1, x2, y1, y2} bounds of the respective patches
-	patch_boundaries(current, a, size, boundary1, bounds1);
-	patch_boundaries(current, b, size, boundary2, bounds2);
-
+	patch_sites(current, a, size, patch1, bounds1);
+	patch_sites(current, b, size, patch2, bounds2);
+	
 	// find and store unique interaction pairs involved in the swap chain
 	std::map<std::set<int>, std::vector<int> > s;
-	unique_interaction_pairs(current, boundary1, boundary2, s);
-
+	unique_interaction_pairs(current, patch1, patch2, s);
+	
 	// calculate initial energy along patch boundaries
 	double Ei = 0.0;
 	for (std::map<std::set<int>, std::vector<int> >::iterator it = s.begin(); it != s.end(); it++) {
 		Ei += pair_energy_farago(current, it->second);
 	}
-	
+
 	// swap patches
 	current.patch_swap(bounds1, bounds2, size);
 
@@ -204,13 +204,13 @@ double patch_swap(membrane& current, std::map<int, std::vector<double> >& patch_
 		current.patch_swap(bounds1, bounds2, size);
 		// log acceptance ratio
 		patch_accept[size][1] += 1.0;
-
+		
 		return 0.0;
 	}
 	else {
 		// log acceptance ratio
 		patch_accept[size][0] += 1.0; patch_accept[size][1] += 1.0;
-
+		
 		return delE;
 	}
 }
@@ -336,7 +336,7 @@ void unique_interaction_pairs(membrane& current, const std::vector<std::vector<i
 	int x, y;
 	int n = sys.get_grid_size();
 	int nbs[6][2] = { {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0} };
-
+	
 	// append sites into one list
 	std::vector<std::vector<int> > sites = sites1;
 	sites.insert(sites.end(), sites2.begin(), sites2.end());
@@ -362,7 +362,7 @@ void unique_interaction_pairs(membrane& current, const std::vector<std::vector<i
 	int x, y;
 	int n = sys.get_grid_size();
 	int nbs[6][2] = { {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0} };
-
+	
 	for (int i = 0; i < sites.size(); i++) {
 
 		x = n * sites[i][0] + sites[i][1];
@@ -379,12 +379,12 @@ void unique_interaction_pairs(membrane& current, const std::vector<std::vector<i
 }
 
 
-void patch_boundaries(membrane& current, const std::vector<int> &a, int patch_size, std::vector<std::vector<int> >& boundary, std::vector<int>& bounds) {
+void patch_sites(membrane& current, const std::vector<int> &a, int patch_size, std::vector<std::vector<int> >& patch, std::vector<int>& bounds) {
 	
 	int n = sys.get_grid_size();
 	
 	int shift = patch_size / 2;
-	//printf("shift = %d\n", shift);
+	
 	if (patch_size % 2 == 0) {
 		int x = (a[0] + 1 - shift) % n, y = (a[1] + 1 - shift) % n;
 		if (x < 0) { x = n + x; }
@@ -404,14 +404,12 @@ void patch_boundaries(membrane& current, const std::vector<int> &a, int patch_si
 		bounds.push_back((a[1] + shift) % n);
 	}
 
-	for (int i = 0; i < patch_size-1; i++) {
-		int x = (bounds[1] - i) % n, y = (bounds[3] - i) % n;
-		if (x < 0) { x = n + x; }
-		if (y < 0) { y = n + y; }
-		boundary.push_back(std::vector<int>{ bounds[0], (bounds[2] + i) % n });
-		boundary.push_back(std::vector<int>{ (bounds[0] + i) % n, bounds[3] });
-		boundary.push_back(std::vector<int>{ bounds[1], y });
-		boundary.push_back(std::vector<int>{ x, bounds[2] });
+	for (int i = 0; i < patch_size; i++) {
+		int x = (bounds[0] + i) % n;
+		for (int j = 0; j < patch_size; j++) {
+			int y = (bounds[2] + j) % n;
+			patch.push_back(std::vector<int>{x, y});
+		}
 	}
 }
 

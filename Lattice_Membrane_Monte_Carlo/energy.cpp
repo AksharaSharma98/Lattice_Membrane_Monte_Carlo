@@ -72,7 +72,7 @@ double pair_energy_farago(membrane& current, std::vector<int>& x) {
 	if (s1 == "DPPCo" || s2 == "DPPCo") {
 		pair_energy -= forcefield.getplane_pair_energy(std::make_pair(s1, s2));
 	}
-
+	
 	return pair_energy;
 }
 

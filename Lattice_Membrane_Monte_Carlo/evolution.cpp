@@ -44,7 +44,7 @@ void evolve_mc_farago(membrane& upper, membrane& lower, int steps, int energy_ou
 	std::vector<double> multi_swap_accept = { 0.0, 0.0 }, state_swap_accept = { 0.0, 0.0 };
 	
 	for (int t = 0; t < steps; t++) {
-
+		//printf("\nStep %d\n", t);
 		// random sampler to pick move type
 		int move = rand_int(0, 2);
 		
@@ -67,9 +67,9 @@ void evolve_mc_farago(membrane& upper, membrane& lower, int steps, int energy_ou
 		// output configuration at specified frequency
 		if (t % energy_output_freq == 0) {
 			write_energy(energy_file, energy);
-			//printf("Energy = %lf\n", energy);
-			//printf("Actual energy = %lf\n", (system_energy_farago(upper) + system_energy_farago(lower)) / e);
-
+			printf("Step: %d\n", t);
+			printf("Energy = %lf\n", energy);
+			printf("Actual energy = %lf\n", (system_energy_farago(upper) + system_energy_farago(lower)) / e);
 			// log acceptance ratios
 			if (t != 0) {
 				printf("\nAcceptance ratios log at step %d:\n", t);
