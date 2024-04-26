@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -26,6 +27,25 @@ void write_config_int(FILE* config_file, membrane& upper, membrane& lower) {
 			fprintf(config_file, "%d ", sys.get_output_type(l.getspecies()));
 		}
 		fprintf(config_file, "\n");
+	}
+}
+
+
+void write_config_bin(std::ofstream& config_bin_file, membrane& upper, membrane& lower) {
+
+	int n = upper.getgrid().size();
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			lipid l = upper.getlipid(i, j);
+			short int site = sys.get_output_type(l.getspecies());
+			config_bin_file.write(reinterpret_cast<char*> (&site), sizeof(site));
+		}
+		for (int j = 0; j < n; j++) {
+			lipid l = lower.getlipid(i, j);
+			short int site = sys.get_output_type(l.getspecies());
+			config_bin_file.write(reinterpret_cast<char*> (&site), sizeof(site));
+		}
 	}
 }
 

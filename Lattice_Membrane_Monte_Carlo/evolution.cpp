@@ -18,14 +18,20 @@
 
 
 // evolves two leaflets via metropolis monte carlo exchange moves.
-void evolve_mc_farago(membrane& upper, membrane& lower, int steps, int energy_output_freq, int config_output_freq) {
+void evolve_mc_farago(membrane& upper, membrane& lower, int steps, int energy_output_freq, int config_output_freq, int restart_output_freq) {
 
 	// output initialization
+	std::ofstream config_bin_file, restart_file;
 	FILE* config_file; FILE* tailconfig_file; FILE* energy_file;
 
+	// write output headers
+	config_bin_file.open("config.bin", std::ios::out | std::ios::binary);
+	config_file = fopen("config.txt", "w+");
 	energy_file = fopen("energy.txt", "w+");
 	write_header(energy_file);
 	fclose(energy_file);
+	fclose(config_file);
+	config_bin_file.close();
 	
 	double energy = (system_energy_farago(upper) + system_energy_farago(lower)) / e; 
 	printf("System energy = %lf\n", energy);
@@ -86,15 +92,21 @@ void evolve_mc_farago(membrane& upper, membrane& lower, int steps, int energy_ou
 			}
 		}
 		if (t % config_output_freq == 0) {
-			std::ofstream config_bin_file;
-
+			config_bin_file.open("config.bin", std::ios::out | std::ios::binary | std::ios::app);
 			config_file = fopen("config.txt", "a+");
 			//tailconfig_file = fopen("tailconfig.txt", "a+");
 			write_config_int(config_file, upper, lower);
-			//write_config_bin(config_bin_file, upper, lower);
+			write_config_bin(config_bin_file, upper, lower);
 			//write_tailconfig(tailconfig_file, upper, lower);
 			fclose(config_file);
+			config_bin_file.close();
 			//fclose(tailconfig_file);
+		}
+
+		if (t % restart_output_freq == 0) {
+			restart_file.open("restart.bin", std::ios::out | std::ios::binary);
+			write_config_bin(restart_file, upper, lower);
+			restart_file.close();
 		}
 		/*if (t % (steps / 10) == 0) {
 			printf("%d%% ", t / (steps / 100));

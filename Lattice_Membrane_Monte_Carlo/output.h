@@ -4,6 +4,8 @@
 
 void write_config_int(FILE* config_file, membrane& upper, membrane& lower);
 
+void write_config_bin(std::ofstream& config_bin_file, membrane& upper, membrane& lower);
+
 void write_tailconfig(FILE* config_file, membrane& upper, membrane& lower);
 
 void write_config_species(FILE* config_file, membrane& upper, membrane& lower);
