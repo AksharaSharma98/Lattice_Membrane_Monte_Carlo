@@ -3,6 +3,7 @@
 #include <string>
 #include <assert.h>
 #include <vector>
+#include <fstream>
 
 #include "lipid.h"
 #include "membrane.h"
@@ -21,10 +22,10 @@ void evolve_mc_farago(membrane& upper, membrane& lower, int steps, int energy_ou
 
 	// output initialization
 	FILE* config_file; FILE* tailconfig_file; FILE* energy_file;
-	config_file = fopen("config.txt", "w+");
-	//tailconfig_file = fopen("tailconfig.txt", "w+");
+
 	energy_file = fopen("energy.txt", "w+");
 	write_header(energy_file);
+	fclose(energy_file);
 	
 	double energy = (system_energy_farago(upper) + system_energy_farago(lower)) / e; 
 	printf("System energy = %lf\n", energy);
@@ -66,10 +67,13 @@ void evolve_mc_farago(membrane& upper, membrane& lower, int steps, int energy_ou
 
 		// output configuration at specified frequency
 		if (t % energy_output_freq == 0) {
+			energy_file = fopen("energy.txt", "a+");
 			write_energy(energy_file, energy);
-			printf("Step: %d\n", t);
-			printf("Energy = %lf\n", energy);
-			printf("Actual energy = %lf\n", (system_energy_farago(upper) + system_energy_farago(lower)) / e);
+			fclose(energy_file);
+			
+			//printf("Step: %d\n", t);
+			//printf("Energy = %lf\n", energy);
+			//printf("Actual energy = %lf\n", (system_energy_farago(upper) + system_energy_farago(lower)) / e);
 			// log acceptance ratios
 			if (t != 0) {
 				printf("\nAcceptance ratios log at step %d:\n", t);
@@ -82,8 +86,15 @@ void evolve_mc_farago(membrane& upper, membrane& lower, int steps, int energy_ou
 			}
 		}
 		if (t % config_output_freq == 0) {
+			std::ofstream config_bin_file;
+
+			config_file = fopen("config.txt", "a+");
+			//tailconfig_file = fopen("tailconfig.txt", "a+");
 			write_config_int(config_file, upper, lower);
+			//write_config_bin(config_bin_file, upper, lower);
 			//write_tailconfig(tailconfig_file, upper, lower);
+			fclose(config_file);
+			//fclose(tailconfig_file);
 		}
 		/*if (t % (steps / 10) == 0) {
 			printf("%d%% ", t / (steps / 100));
@@ -92,10 +103,6 @@ void evolve_mc_farago(membrane& upper, membrane& lower, int steps, int energy_ou
 	printf("\nSimulation Complete!\n");
 	//printf("100%%\nSimulation complete\n");
 
-	// clean-up
-	fclose(config_file);
-	//fclose(tailconfig_file);
-	fclose(energy_file);
 }
 
 
