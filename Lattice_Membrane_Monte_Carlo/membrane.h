@@ -19,6 +19,7 @@ public:
 
 	// accessor functions
 	int getsize();
+	int getleafletindex();
 	Grid& getgrid();
 	lipid& getlipid(int i, int j);
 	
@@ -33,6 +34,7 @@ protected:
 
 	int size;
 	Grid grid;
+	int leaflet_index;
 
 };
 

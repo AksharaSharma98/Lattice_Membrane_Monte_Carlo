@@ -102,6 +102,10 @@ double multi_swap(membrane& current, int batch_size, std::vector<double>& accept
 
 double state_swap(membrane& current, int batch_size, std::vector<double>& acceptance) {
 
+	if (sys.get_population(current.getleafletindex(), 1) == 0 && sys.get_population(current.getleafletindex(), 2) == 0) {
+		return 0.0;
+	}
+
 	// pick and store a sequence of pairs of non-degenerate lipids to exchange
 	std::vector<int> a{ 0, 0 };
 	std::vector<std::vector<int> > sites;

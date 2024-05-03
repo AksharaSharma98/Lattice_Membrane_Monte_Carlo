@@ -22,7 +22,7 @@ using namespace std;
 
 // global variables
 double e = 1.0;
-double kT = 0.8;
+double kT = 0.8;    // 0.802 is 280 K, 0.9 is 314 K
 
 // initialize forcefield
 Parameters forcefield;
@@ -42,7 +42,7 @@ int main()
 	printf("Completed system setup\n");
 
 	// system evolution
-	evolve_mc_farago(upper, lower, 12000, 3000, 3000, 6000);
+	evolve_mc_farago(upper, lower, 30000000, 30000, 30000, 300000);
 
 	// testing (temporary)
 	
