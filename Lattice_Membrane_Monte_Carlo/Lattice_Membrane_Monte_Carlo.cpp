@@ -13,6 +13,7 @@
 #include "membrane.h"
 #include "parameters.h"
 #include "system.h"
+#include "initialize.h"
 #include "evolution.h"
 #include "Lattice_Membrane_Monte_Carlo.h"
 
@@ -22,7 +23,7 @@ using namespace std;
 
 // global variables
 double e = 1.0;
-double kT = 0.8;    // 0.802 is 280 K, 0.9 is 314 K
+double kT = 0.9;    // 0.802 is 280 K, 0.9 is 314 K
 
 // initialize forcefield
 Parameters forcefield;
@@ -37,12 +38,14 @@ int main()
 	clock_t clkStart = clock();
 
 	// system initialization
+	//std::pair<membrane, membrane> bilayer = initialize();
 	membrane upper(0);
 	membrane lower(1); 
 	printf("Completed system setup\n");
 
 	// system evolution
 	evolve_mc_farago(upper, lower, 30000000, 30000, 30000, 300000);
+	//evolve_mc_farago(bilayer.first, bilayer.second, 30000000, 30000, 30000, 300000);
 
 	// testing (temporary)
 	
