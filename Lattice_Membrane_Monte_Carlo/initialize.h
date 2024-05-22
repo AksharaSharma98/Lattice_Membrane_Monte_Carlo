@@ -2,6 +2,6 @@
 #define initialize_h
 
 
-std::pair<membrane, membrane> initialize();
+std::pair<membrane, membrane> initialize(int& steps, int& energy_output_freq, int& config_output_freq, int& restart_output_freq);
 
 #endif

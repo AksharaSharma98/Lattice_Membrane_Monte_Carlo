@@ -1,6 +1,9 @@
 #include <string>
 #include <vector>
 #include <assert.h>
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
 #include "lipid.h"
 #include "math_functions.h"
@@ -18,56 +21,80 @@ membrane::membrane (int leaflet)
 
 	leaflet_index = leaflet;
 	
-	assert(size%2 == 0 && "Grid size must be even");
+	assert(size%2 == 0 && "Lattice size must be even");
 	assert(size >= 1 && "Invalid grid size");
 
 	// initialize grid of lipids
-
 	std::vector<std::vector<int> > matrix(size, std::vector<int>(size, -1));
-	std::vector<int> count;
-	for (int i = 0; i < num_species; i++) {
-		count.push_back(0);
-	}
 
-	bool full = false;
-	int x, y, l, total = 0;
-	while (full == false) {
-		bool valid_position = false;
-		while (valid_position == false) {
-			x = rand_int(0, size - 1);
-			y = rand_int(0, size - 1);
-			if (matrix[x][y] == -1) {
-				valid_position = true;
+	std::ifstream restart_file;
+	restart_file.open("restart.txt");
+	// initialize lipid matrix from restart file if it exists
+	if (restart_file) {
+		if (restart_file.is_open()) { // check if this is redundant with previous line
+			std::string line;
+			int row = 0;
+			while (std::getline(restart_file, line)) {
+
+				std::istringstream line_string(line);
+				int l; int col = 0;
+				while (line_string >> l) {
+					if (size * leaflet <= col && col < size * (leaflet + 1)) {
+						matrix[row][col] = l;
+					}
+					col += 1;
+				}
+				row += 1;
 			}
-		}
-		bool valid_species = false;
-		while (valid_species == false) {
-			l = rand_int(0, num_species - 1);
-			if (count[l] < sys.get_population(leaflet,l)) {
-				valid_species = true;
-			}
-		}
-		if (valid_position == true && valid_species == true) {
-			matrix[x][y] = l;
-			count[l] += 1;
-			total += 1;
-		}
-		if (total == size*size) {
-			full = true;
 		}
 	}
+	// initialize random distribution if no restart file
+	else {
+		std::vector<int> count;
+		for (int i = 0; i < num_species; i++) {
+			count.push_back(0);
+		}
+
+		bool full = false;
+		int x, y, l, total = 0;
+		while (full == false) {
+			bool valid_position = false;
+			while (valid_position == false) {
+				x = rand_int(0, size - 1);
+				y = rand_int(0, size - 1);
+				if (matrix[x][y] == -1) {
+					valid_position = true;
+				}
+			}
+			bool valid_species = false;
+			while (valid_species == false) {
+				l = rand_int(0, num_species - 1);
+				if (count[l] < sys.get_population(leaflet, l)) {
+					valid_species = true;
+				}
+			}
+			if (valid_position == true && valid_species == true) {
+				matrix[x][y] = l;
+				count[l] += 1;
+				total += 1;
+			}
+			if (total == size * size) {
+				full = true;
+			}
+		}
+	}
+	
 
 	for (int i = 0; i < size; i++) {
 		grid.push_back(Array());
 	}
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
-			l = matrix[i][j];
+			int l = matrix[i][j];
 			int position[2] = { i,j };
 			double s = sample_tailorder(sys.get_species(leaflet,l), -1.0);
 			lipid a(sys.get_species(leaflet,l), s, position);
 			grid[i].push_back(a);  // vector.push_back(value) appends value at end of vector
-			count[l] += 1;
 		}
 	}
 }

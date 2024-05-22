@@ -38,14 +38,13 @@ int main()
 	clock_t clkStart = clock();
 
 	// system initialization
-	//std::pair<membrane, membrane> bilayer = initialize();
-	membrane upper(0);
-	membrane lower(1); 
+	int steps, energy_out_freq, config_out_freq, restart_out_freq;
+	std::pair<membrane, membrane> bilayer = initialize(steps, energy_out_freq, config_out_freq, restart_out_freq);
 	printf("Completed system setup\n");
 
 	// system evolution
-	evolve_mc_farago(upper, lower, 30000000, 30000, 30000, 300000);
-	//evolve_mc_farago(bilayer.first, bilayer.second, 30000000, 30000, 30000, 300000);
+	//evolve_mc_farago(upper, lower, 30000000, 30000, 30000, 300000);
+	evolve_mc_farago(bilayer.first, bilayer.second, steps, energy_out_freq, config_out_freq, restart_out_freq);
 
 	// testing (temporary)
 	
