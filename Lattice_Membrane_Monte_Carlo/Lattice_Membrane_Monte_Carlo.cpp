@@ -43,7 +43,6 @@ int main()
 	printf("Completed system setup\n");
 
 	// system evolution
-	//evolve_mc_farago(upper, lower, 30000000, 30000, 30000, 300000);
 	evolve_mc_farago(bilayer.first, bilayer.second, steps, energy_out_freq, config_out_freq, restart_out_freq);
 
 	// testing (temporary)

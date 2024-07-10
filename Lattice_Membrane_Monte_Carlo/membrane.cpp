@@ -50,6 +50,7 @@ membrane::membrane (int leaflet)
 	}
 	// initialize random distribution if no restart file
 	else {
+		// if it takes too long for large systems, try random placing from lipid lists
 		std::vector<int> count;
 		for (int i = 0; i < num_species; i++) {
 			count.push_back(0);
@@ -169,39 +170,6 @@ void membrane::patch_swap(std::vector<int>& bounds1, std::vector<int>& bounds2, 
 			grid[x2][y2] = l;
 		}
 	}
-
-	// For overlapping patches, incomplete: Needs resolution scheme for overlapping region(s)
-	/*// Create a deep copy of both patches
-	Grid patch1, patch2;
-
-	for (int i = 0; i < patch_size; i++) {
-		int x1 = (bounds1[0] + i) % size;
-		int x2 = (bounds2[0] + i) % size;
-		patch1.push_back(Array());
-		patch2.push_back(Array());
-		for (int j = 0; j < patch_size; j++) {
-			int y1 = (bounds1[2] + j) % size;
-			int y2 = (bounds2[2] + j) % size;
-
-			patch1[i].push_back(grid[x1][y1]);
-			patch2[i].push_back(grid[x2][y2]);
-		}
-	}
-	
-	// swap the patches using the copies
-	for (int i = 0; i < patch_size; i++) {
-		int x1 = (bounds1[0] + i) % size;
-		int x2 = (bounds2[0] + i) % size;
-		
-		for (int j = 0; j < patch_size; j++) {
-			int y1 = (bounds1[2] + j) % size;
-			int y2 = (bounds2[2] + j) % size;
-			
-			grid[x1][y1] = patch2[i][j];
-			grid[x2][y2] = patch1[i][j];
-		}
-	}*/
-
 }
 
 

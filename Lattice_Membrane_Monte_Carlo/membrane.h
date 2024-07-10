@@ -23,7 +23,6 @@ public:
 	Grid& getgrid();
 	lipid& getlipid(int i, int j);
 	
-
 	// modifier functions
 	void swap(std::vector<int> &a, std::vector<int> &b);
 	void swap_DPPC_state(std::vector<int>& a);
